@@ -1,0 +1,223 @@
+/**
+ * Frontend CSS for Checkbox Products field
+ *
+ * Styles for the checkbox products field on the frontend
+ * Matches Gravity Forms native checkbox styling
+ *
+ * @package GF_Checkbox_Products
+ */
+
+/* ========================================
+   Checkbox Container
+   ======================================== */
+
+.gfield_checkbox_product {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gfield_checkbox_product li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gfield--type-checkbox_product .gfield_checkbox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gf-field-choice-gap);
+}
+.gfield--type-checkbox_product .gchoice {
+  display: inline-grid;
+  gap: var(--gf-field-choice-meta-space) 0;
+  grid-template-columns: minmax(var(--gf-ctrl-choice-size), max-content) auto;
+}
+
+/* ========================================
+   Checkbox Input
+   ======================================== */
+
+.gfield-checkbox-product-choice {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* ========================================
+   Labels
+   ======================================== */
+
+.gfield_checkbox_product label {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Price display within label */
+.ginput_product_price {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* ========================================
+   Optional Enhanced Styles
+   ======================================== */
+
+/* Card-style checkboxes (optional) */
+.gfield_checkbox_product.gf-checkbox-card-style li {
+  margin-bottom: 8px;
+}
+
+.gfield_checkbox_product.gf-checkbox-card-style label {
+  width: 100%;
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.gfield_checkbox_product.gf-checkbox-card-style label:hover {
+  background: #f5f5f5;
+  border-color: #2271b1;
+}
+
+.gfield_checkbox_product.gf-checkbox-card-style
+  .gfield-checkbox-product-choice:checked
+  + label {
+  background: #e8f4f8;
+  border-color: #2271b1;
+  box-shadow: 0 2px 4px rgba(34, 113, 177, 0.1);
+}
+
+.gfield_checkbox_product.gf-checkbox-card-style .ginput_product_price {
+  margin-left: auto;
+  font-size: 1.1em;
+}
+
+/* ========================================
+   Validation States
+   ======================================== */
+
+.gfield_error .gfield_checkbox_product label {
+  color: #c02b0a;
+}
+
+.gfield_error .gfield-checkbox-product-choice {
+  border-color: #c02b0a;
+}
+
+/* ========================================
+   RTL Support
+   ======================================== */
+
+[dir="rtl"] .gfield-checkbox-product-choice {
+  margin: 0 0 0 10px;
+}
+
+[dir="rtl"] .ginput_product_price {
+  margin-left: 0;
+  margin-right: 6px;
+}
+
+/* ========================================
+   Dark Mode Support (optional)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .gfield_checkbox_product label {
+    color: #e0e0e0;
+  }
+
+  .ginput_product_price {
+    color: #aaa;
+  }
+
+  .gfield-checkbox-product-choice:checked + label .ginput_product_price {
+    color: #6eb4e0;
+  }
+
+  .gfield_checkbox_product.gf-checkbox-card-style label {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #e0e0e0;
+  }
+
+  .gfield_checkbox_product.gf-checkbox-card-style label:hover {
+    background: #333;
+    border-color: #6eb4e0;
+  }
+
+  .gfield_checkbox_product.gf-checkbox-card-style
+    .gfield-checkbox-product-choice:checked
+    + label {
+    background: #1a3a4a;
+    border-color: #6eb4e0;
+  }
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+
+.gfield_checkbox_product.gf-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.gfield_checkbox_product.gf-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #2271b1;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: gf-spinner 0.6s linear infinite;
+}
+
+@keyframes gf-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .gfield-checkbox-product-choice {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #000;
+    margin-right: 8px;
+  }
+
+  .gfield-checkbox-product-choice:checked {
+    background: #000;
+    position: relative;
+  }
+
+  .gfield-checkbox-product-choice:checked::after {
+    content: "✓";
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .ginput_product_price {
+    color: #000;
+    font-weight: bold;
+  }
+}

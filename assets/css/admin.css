@@ -1,0 +1,247 @@
+/**
+ * Admin CSS for Checkbox Products field
+ *
+ * Styles for the form editor settings panel
+ *
+ * @package GF_Checkbox_Products
+ */
+
+/* ========================================
+   Product Choices Container
+   ======================================== */
+
+.gf-checkbox-products-choices {
+    margin: 10px 0;
+}
+
+.gf-checkbox-product-choice-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.gf-checkbox-product-choice-row:hover {
+    background: #f5f5f5;
+}
+
+/* ========================================
+   Choice Columns
+   ======================================== */
+
+.gf-choice-column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gf-choice-column label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gf-choice-column-label {
+    flex: 2;
+    min-width: 0;
+}
+
+.gf-choice-column-value {
+    flex: 1.5;
+    min-width: 0;
+}
+
+.gf-choice-column-price {
+    flex: 1;
+    min-width: 100px;
+}
+
+.gf-choice-column-actions {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+}
+
+/* ========================================
+   Input Fields
+   ======================================== */
+
+.gf-choice-label,
+.gf-choice-value,
+.gf-choice-price {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    transition: border-color 0.2s ease;
+}
+
+.gf-choice-label:focus,
+.gf-choice-value:focus,
+.gf-choice-price:focus {
+    border-color: #2271b1;
+    outline: none;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.gf-choice-price {
+    font-family: monospace;
+}
+
+/* ========================================
+   Delete Button
+   ======================================== */
+
+.gf-delete-choice {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    background: #fff;
+    border: 1px solid #dc3232;
+    border-radius: 3px;
+    color: #dc3232;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 34px;
+}
+
+.gf-delete-choice:hover {
+    background: #dc3232;
+    color: #fff;
+}
+
+.gf-delete-choice:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px #dc3232;
+}
+
+.gf-delete-choice .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* ========================================
+   Add Choice Button
+   ======================================== */
+
+.gf-add-checkbox-product-choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gf-add-checkbox-product-choice::before {
+    content: '+';
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ========================================
+   Empty State
+   ======================================== */
+
+#checkbox_product_choices_container:empty::before {
+    content: 'No product choices added yet. Click "Add Product Choice" to get started.';
+    display: block;
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    background: #f9f9f9;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+}
+
+/* ========================================
+   Field Setting Container
+   ======================================== */
+
+.checkbox_product_choices_setting {
+    margin-top: 15px;
+}
+
+.checkbox_product_choices_setting .section_label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.checkbox_product_choices_setting .description {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+
+@media screen and (max-width: 782px) {
+    .gf-checkbox-product-choice-row {
+        flex-wrap: wrap;
+    }
+
+    .gf-choice-column-label,
+    .gf-choice-column-value,
+    .gf-choice-column-price {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .gf-choice-column-actions {
+        flex: 1 1 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* ========================================
+   Tooltips
+   ======================================== */
+
+.gf-checkbox-products-choices .gf_tooltip {
+    margin-left: 4px;
+}
+
+/* ========================================
+   Animation
+   ======================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gf-checkbox-product-choice-row {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ========================================
+   Field Editor Preview
+   ======================================== */
+
+.field_type_checkbox_product .field_label {
+    font-weight: 600;
+}
+
+.field_type_checkbox_product .ginput_container {
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
