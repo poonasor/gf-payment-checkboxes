@@ -37,7 +37,7 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @return string
      */
     public function get_form_editor_field_title() {
-        return esc_attr__('Checkbox Products', 'gf-checkbox-products');
+        return esc_attr__('Checkbox Products', 'gf-payment-checkboxes');
     }
 
     /**
@@ -120,7 +120,7 @@ class GF_Field_Checkbox_Product extends GF_Field {
         } else {
             // No choices defined
             $html .= '<div class="gchoice">';
-            $html .= esc_html__('No product choices configured.', 'gf-checkbox-products');
+            $html .= esc_html__('No product choices configured.', 'gf-payment-checkboxes');
             $html .= '</div>';
         }
 
@@ -325,7 +325,7 @@ class GF_Field_Checkbox_Product extends GF_Field {
 
         return sprintf(
             /* translators: 1: number of items, 2: total price */
-            esc_html__('%1$d item(s) - %2$s', 'gf-checkbox-products'),
+            esc_html__('%1$d item(s) - %2$s', 'gf-payment-checkboxes'),
             $count,
             GFCommon::to_money($total, $currency)
         );
@@ -376,7 +376,7 @@ class GF_Field_Checkbox_Product extends GF_Field {
             if (empty($selected) || (count($selected) === 1 && empty($selected[0]))) {
                 $this->failed_validation = true;
                 $this->validation_message = empty($this->errorMessage)
-                    ? esc_html__('This field is required. Please select at least one option.', 'gf-checkbox-products')
+                    ? esc_html__('This field is required. Please select at least one option.', 'gf-payment-checkboxes')
                     : $this->errorMessage;
             }
         }

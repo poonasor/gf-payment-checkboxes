@@ -1,8 +1,8 @@
-=== Gravity Forms Checkbox Products ===
-Contributors: yourusername
+=== Checkbox Products for Gravity Forms ===
+Contributors: rickypoon
 Tags: gravity forms, products, checkbox, pricing, payments
 Requires at least: 5.8
-Tested up to: 6.4
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -12,7 +12,7 @@ Adds a checkbox-based product field to Gravity Forms for selecting multiple prod
 
 == Description ==
 
-**Gravity Forms Checkbox Products** extends Gravity Forms with a powerful new field type that allows users to select multiple products using checkboxes, each with their own individual price.
+**Checkbox Products for Gravity Forms** extends Gravity Forms with a powerful new field type that allows users to select multiple products using checkboxes, each with their own individual price.
 
 = Features =
 

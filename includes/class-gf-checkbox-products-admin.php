@@ -49,7 +49,7 @@ class GF_Checkbox_Products_Admin {
         ?>
         <li class="checkbox_product_choices_setting field_setting">
             <label class="section_label" for="checkbox_product_choices_container">
-                <?php esc_html_e('Product Choices', 'gf-checkbox-products'); ?>
+                <?php esc_html_e('Product Choices', 'gf-payment-checkboxes'); ?>
                 <?php gform_tooltip('form_field_checkbox_product_choices'); ?>
             </label>
 
@@ -58,11 +58,11 @@ class GF_Checkbox_Products_Admin {
             </div>
 
             <button type="button" class="button gf-add-checkbox-product-choice" style="margin-top: 10px;" onclick="gfCheckboxProductAddChoice(); return false;">
-                <?php esc_html_e('Add Product Choice', 'gf-checkbox-products'); ?>
+                <?php esc_html_e('Add Product Choice', 'gf-payment-checkboxes'); ?>
             </button>
 
             <p class="description" style="margin-top: 10px;">
-                <?php esc_html_e('Add product choices with individual prices. Each checkbox can have a different price.', 'gf-checkbox-products'); ?>
+                <?php esc_html_e('Add product choices with individual prices. Each checkbox can have a different price.', 'gf-payment-checkboxes'); ?>
             </p>
         </li>
         <?php
@@ -89,10 +89,10 @@ class GF_Checkbox_Products_Admin {
             'gfCheckboxProductsAdmin',
             [
                 'i18n' => [
-                    'confirmDelete' => esc_html__('Are you sure you want to delete this choice?', 'gf-checkbox-products'),
-                    'labelPlaceholder' => esc_attr__('Product Name', 'gf-checkbox-products'),
-                    'pricePlaceholder' => esc_attr__('0.00', 'gf-checkbox-products'),
-                    'valuePlaceholder' => esc_attr__('value', 'gf-checkbox-products'),
+                    'confirmDelete' => esc_html__('Are you sure you want to delete this choice?', 'gf-payment-checkboxes'),
+                    'labelPlaceholder' => esc_attr__('Product Name', 'gf-payment-checkboxes'),
+                    'pricePlaceholder' => esc_attr__('0.00', 'gf-payment-checkboxes'),
+                    'valuePlaceholder' => esc_attr__('value', 'gf-payment-checkboxes'),
                 ],
                 'currency' => GFCommon::get_currency(),
             ]
@@ -116,8 +116,8 @@ class GF_Checkbox_Products_Admin {
     public function add_tooltips($tooltips) {
         $tooltips['form_field_checkbox_product_choices'] = sprintf(
             '<h6>%s</h6>%s',
-            esc_html__('Product Choices', 'gf-checkbox-products'),
-            esc_html__('Add the products you want users to select from. Each product can have its own price. The selected products will be added to the form total.', 'gf-checkbox-products')
+            esc_html__('Product Choices', 'gf-payment-checkboxes'),
+            esc_html__('Add the products you want users to select from. Each product can have its own price. The selected products will be added to the form total.', 'gf-payment-checkboxes')
         );
 
         return $tooltips;
@@ -132,7 +132,7 @@ class GF_Checkbox_Products_Admin {
      */
     public function field_type_title($title, $type) {
         if ($type === 'checkbox_product') {
-            return esc_html__('Checkbox Products', 'gf-checkbox-products');
+            return esc_html__('Checkbox Products', 'gf-payment-checkboxes');
         }
 
         return $title;

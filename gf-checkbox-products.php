@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: Gravity Forms Checkbox Products
- * Plugin URI: https://github.com/yourusername/gf-checkbox-products
+ * Plugin Name: Checkbox Products for Gravity Forms
+ * Plugin URI: https://github.com/poonasor/gf-payment-checkboxes
  * Description: Adds a checkbox-based product field to Gravity Forms for selecting multiple products with individual prices
  * Version: 1.0.0
- * Author: Your Name
- * Author URI: https://yourwebsite.com
- * Text Domain: gf-checkbox-products
+ * Author: Ricky Poon
+ * Author URI: https://perpetualmedia.ca/
+ * Text Domain: gf-payment-checkboxes
  * Domain Path: /languages
  * Requires PHP: 7.4
  * Requires at least: 5.8
@@ -56,9 +56,6 @@ class GF_Checkbox_Products_Bootstrap {
         // Initialize admin and pricing classes
         new GF_Checkbox_Products_Admin();
         new GF_Checkbox_Products_Pricing();
-
-        // Load text domain for translations
-        add_action('init', [__CLASS__, 'load_textdomain']);
     }
 
     /**
@@ -93,23 +90,10 @@ class GF_Checkbox_Products_Bootstrap {
     public static function gf_required_notice() {
         $message = sprintf(
             /* translators: %s: minimum Gravity Forms version */
-            esc_html__('Gravity Forms Checkbox Products requires Gravity Forms %s or higher to be installed and activated.', 'gf-checkbox-products'),
+            esc_html__('Checkbox Products for Gravity Forms requires Gravity Forms %s or higher to be installed and activated.', 'gf-payment-checkboxes'),
             GF_CHECKBOX_PRODUCTS_MIN_GF_VERSION
         );
 
-        echo '<div class="error"><p><strong>' . esc_html__('Gravity Forms Checkbox Products', 'gf-checkbox-products') . ':</strong> ' . $message . '</p></div>';
-    }
-
-    /**
-     * Load plugin text domain for translations
-     *
-     * @return void
-     */
-    public static function load_textdomain() {
-        load_plugin_textdomain(
-            'gf-checkbox-products',
-            false,
-            dirname(plugin_basename(__FILE__)) . '/languages'
-        );
+        echo '<div class="error"><p><strong>' . esc_html__('Checkbox Products for Gravity Forms', 'gf-payment-checkboxes') . ':</strong> ' . esc_html($message) . '</p></div>';
     }
 }
