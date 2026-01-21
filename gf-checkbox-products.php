@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Checkbox Products for Gravity Forms
  * Plugin URI: https://github.com/poonasor/gf-payment-checkboxes
@@ -33,14 +34,16 @@ add_action('gform_loaded', ['GF_Checkbox_Products_Bootstrap', 'load'], 5);
  *
  * Handles plugin initialization and dependency checks
  */
-class GF_Checkbox_Products_Bootstrap {
+class GF_Checkbox_Products_Bootstrap
+{
 
     /**
      * Load the plugin
      *
      * @return void
      */
-    public static function load() {
+    public static function load()
+    {
         // Check if Gravity Forms is active and meets minimum version
         if (!self::is_gravityforms_supported()) {
             add_action('admin_notices', [__CLASS__, 'gf_required_notice']);
@@ -52,6 +55,7 @@ class GF_Checkbox_Products_Bootstrap {
 
         // Register the custom field
         GF_Fields::register(new GF_Field_Checkbox_Product());
+        GF_Fields::register(new GF_Field_Deposit_Total());
 
         // Initialize admin and pricing classes
         new GF_Checkbox_Products_Admin();
@@ -63,7 +67,8 @@ class GF_Checkbox_Products_Bootstrap {
      *
      * @return bool
      */
-    private static function is_gravityforms_supported() {
+    private static function is_gravityforms_supported()
+    {
         if (!class_exists('GFForms')) {
             return false;
         }
@@ -76,8 +81,10 @@ class GF_Checkbox_Products_Bootstrap {
      *
      * @return void
      */
-    private static function load_files() {
+    private static function load_files()
+    {
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-checkbox-product.php';
+        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-deposit-total.php';
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-checkbox-products-admin.php';
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-checkbox-products-pricing.php';
     }
@@ -87,7 +94,8 @@ class GF_Checkbox_Products_Bootstrap {
      *
      * @return void
      */
-    public static function gf_required_notice() {
+    public static function gf_required_notice()
+    {
         $message = sprintf(
             /* translators: %s: minimum Gravity Forms version */
             esc_html__('Checkbox Products for Gravity Forms requires Gravity Forms %s or higher to be installed and activated.', 'gf-payment-checkboxes'),

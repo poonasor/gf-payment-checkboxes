@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Interface Class
  *
@@ -15,12 +16,14 @@ if (!defined('ABSPATH')) {
 /**
  * Admin functionality for Checkbox Product field
  */
-class GF_Checkbox_Products_Admin {
+class GF_Checkbox_Products_Admin
+{
 
     /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Add custom settings UI to form editor
         add_action('gform_field_standard_settings', [$this, 'field_settings_ui'], 10, 2);
 
@@ -41,12 +44,21 @@ class GF_Checkbox_Products_Admin {
      * @param int $form_id  Form ID
      * @return void
      */
-    public function field_settings_ui($position, $form_id) {
+    public function field_settings_ui($position, $form_id)
+    {
         // Add settings at position 25 (after standard choices setting)
         if ($position !== 25) {
             return;
         }
-        ?>
+?>
+        <li class="deposit_total_percent_setting field_setting">
+            <label class="section_label" for="field_deposit_total_percent">
+                <?php esc_html_e('Deposit Percentage', 'gf-payment-checkboxes'); ?>
+                <?php gform_tooltip('form_field_deposit_total_percent'); ?>
+            </label>
+            <input type="text" id="field_deposit_total_percent" onkeyup="SetFieldProperty('depositPercent', this.value);" onchange="SetFieldProperty('depositPercent', this.value);" />
+        </li>
+
         <li class="checkbox_product_choices_setting field_setting">
             <label class="section_label" for="checkbox_product_choices_container">
                 <?php esc_html_e('Product Choices', 'gf-payment-checkboxes'); ?>
@@ -65,7 +77,7 @@ class GF_Checkbox_Products_Admin {
                 <?php esc_html_e('Add product choices with individual prices. Each checkbox can have a different price.', 'gf-payment-checkboxes'); ?>
             </p>
         </li>
-        <?php
+<?php
     }
 
     /**
@@ -73,7 +85,8 @@ class GF_Checkbox_Products_Admin {
      *
      * @return void
      */
-    public function editor_js() {
+    public function editor_js()
+    {
         // Enqueue admin JavaScript
         wp_enqueue_script(
             'gf-checkbox-products-admin',
@@ -113,11 +126,18 @@ class GF_Checkbox_Products_Admin {
      * @param array $tooltips Existing tooltips
      * @return array Modified tooltips
      */
-    public function add_tooltips($tooltips) {
+    public function add_tooltips($tooltips)
+    {
         $tooltips['form_field_checkbox_product_choices'] = sprintf(
             '<h6>%s</h6>%s',
             esc_html__('Product Choices', 'gf-payment-checkboxes'),
             esc_html__('Add the products you want users to select from. Each product can have its own price. The selected products will be added to the form total.', 'gf-payment-checkboxes')
+        );
+
+        $tooltips['form_field_deposit_total_percent'] = sprintf(
+            '<h6>%s</h6>%s',
+            esc_html__('Deposit Percentage', 'gf-payment-checkboxes'),
+            esc_html__('Enter a percentage (e.g. 10% or 50) to calculate the deposit amount from the form total.', 'gf-payment-checkboxes')
         );
 
         return $tooltips;
@@ -130,7 +150,8 @@ class GF_Checkbox_Products_Admin {
      * @param string $type  Field type
      * @return string Modified title
      */
-    public function field_type_title($title, $type) {
+    public function field_type_title($title, $type)
+    {
         if ($type === 'checkbox_product') {
             return esc_html__('Checkbox Products', 'gf-payment-checkboxes');
         }
