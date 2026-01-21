@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Checkbox Product Field Class
  *
@@ -22,7 +23,8 @@ if (!class_exists('GF_Field')) {
  *
  * Extends GF_Field to create a checkbox-based product selector
  */
-class GF_Field_Checkbox_Product extends GF_Field {
+class GF_Field_Checkbox_Product extends GF_Field
+{
 
     /**
      * Field type identifier
@@ -36,7 +38,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      *
      * @return string
      */
-    public function get_form_editor_field_title() {
+    public function get_form_editor_field_title()
+    {
         return esc_attr__('Checkbox Products', 'gf-payment-checkboxes');
     }
 
@@ -45,7 +48,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      *
      * @return array
      */
-    public function get_form_editor_button() {
+    public function get_form_editor_button()
+    {
         return [
             'group' => 'pricing_fields',
             'text'  => $this->get_form_editor_field_title(),
@@ -53,11 +57,22 @@ class GF_Field_Checkbox_Product extends GF_Field {
     }
 
     /**
+     * Get field icon for form editor button
+     *
+     * @return string
+     */
+    public function get_form_editor_field_icon()
+    {
+        return 'gform-icon gform-icon--check-box';
+    }
+
+    /**
      * Define which settings appear in the form editor
      *
      * @return array
      */
-    public function get_form_editor_field_settings() {
+    public function get_form_editor_field_settings()
+    {
         return [
             'label_setting',
             'description_setting',
@@ -75,7 +90,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      *
      * @return bool
      */
-    public function is_product_field() {
+    public function is_product_field()
+    {
         return true;
     }
 
@@ -87,7 +103,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array|null $entry The entry object when available
      * @return string Field HTML markup
      */
-    public function get_field_input($form, $value = '', $entry = null) {
+    public function get_field_input($form, $value = '', $entry = null)
+    {
         $form_id = absint($form['id']);
         $field_id = absint($this->id);
         $is_entry_detail = $this->is_entry_detail();
@@ -141,7 +158,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array  $form            The form object
      * @return string Choice HTML markup
      */
-    private function render_choice($choice, $index, $form_id, $field_id, $selected_values, $form) {
+    private function render_choice($choice, $index, $form_id, $field_id, $selected_values, $form)
+    {
         $choice_id = $field_id . '_' . ($index + 1);
         $input_id = sprintf('choice_%d_%s', $form_id, $choice_id);
         $label_id = sprintf('label_%d_%s', $form_id, $choice_id);
@@ -190,7 +208,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array $form The form object
      * @return string Currency code
      */
-    private function get_currency($form) {
+    private function get_currency($form)
+    {
         return rgar($form, 'currency', GFCommon::get_currency());
     }
 
@@ -201,7 +220,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param bool  $get_from_post_global Whether to get value from $_POST
      * @return array|string Submitted value
      */
-    public function get_value_submission($field_values, $get_from_post_global = true) {
+    public function get_value_submission($field_values, $get_from_post_global = true)
+    {
         $field_id = $this->id;
         $input_name = 'input_' . $field_id;
 
@@ -227,7 +247,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array  $entry         The entry object
      * @return string Formatted value for storage
      */
-    public function get_value_save_entry($value, $form, $input_name, $entry_id, $entry) {
+    public function get_value_save_entry($value, $form, $input_name, $entry_id, $entry)
+    {
         if (is_array($value)) {
             // Filter out empty values and join with commas
             $value = array_filter($value);
@@ -247,7 +268,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param string $media    Output media (screen, email, etc)
      * @return string Formatted value
      */
-    public function get_value_entry_detail($value, $currency = '', $use_text = false, $format = 'html', $media = 'screen') {
+    public function get_value_entry_detail($value, $currency = '', $use_text = false, $format = 'html', $media = 'screen')
+    {
         if (empty($value)) {
             return '';
         }
@@ -303,7 +325,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array  $form     The form object
      * @return string Formatted value
      */
-    public function get_value_entry_list($value, $entry, $field_id, $columns, $form) {
+    public function get_value_entry_list($value, $entry, $field_id, $columns, $form)
+    {
         if (empty($value)) {
             return '';
         }
@@ -346,7 +369,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param bool   $nl2br      Whether to convert newlines to <br>
      * @return string Formatted value
      */
-    public function get_value_merge_tag($value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br) {
+    public function get_value_merge_tag($value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br)
+    {
         $currency = rgar($entry, 'currency', GFCommon::get_currency());
         $detail = $this->get_value_entry_detail($value, $currency, false, $format);
 
@@ -368,7 +392,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array  $form  The form object
      * @return void
      */
-    public function validate($value, $form) {
+    public function validate($value, $form)
+    {
         // If field is required, ensure at least one checkbox is selected
         if ($this->isRequired) {
             $selected = is_array($value) ? $value : [];
@@ -388,7 +413,8 @@ class GF_Field_Checkbox_Product extends GF_Field {
      * @param array $entry The entry object
      * @return array Array of product info
      */
-    public function get_product_field_values($entry) {
+    public function get_product_field_values($entry)
+    {
         $products = [];
         $field_id = $this->id;
         $selected = rgar($entry, $field_id);
