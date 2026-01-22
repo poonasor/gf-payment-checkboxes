@@ -45,17 +45,17 @@
       initializeForm(formId);
     });
 
-    // Deposit total: recalc when the total changes
+    // Deposit Due: recalc when the total changes
     $(document).on("gform_total_change", function (event, formId) {
       updateDepositTotals(formId);
     });
 
-    // Deposit total: recalc when pricing changes
+    // Deposit Due: recalc when pricing changes
     $(document).on("gform_price_change", function (event, formId) {
       updateDepositTotals(formId);
     });
 
-    // Deposit total: recalc when percentage input changes
+    // Deposit Due: recalc when percentage input changes
     $(document).on("input change", ".deposit-total-percent-value", function () {
       var $input = $(this);
       var $form = $input.closest("form");

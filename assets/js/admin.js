@@ -40,11 +40,8 @@
       $("#field_deposit_total_percent").val(field.depositPercent || "");
 
       if (!field.label || field.label === "Untitled") {
-        window.SetFieldProperty("label", "Deposit Total");
-        $("#field_label")
-          .val("Deposit Total")
-          .trigger("input")
-          .trigger("change");
+        window.SetFieldProperty("label", "Deposit Due");
+        $("#field_label").val("Deposit Due").trigger("input").trigger("change");
       }
     }
   });
@@ -52,7 +49,7 @@
   $(document).on("gform_field_added", function (event, form, field) {
     if (field && field.type === "deposit_total") {
       if (!field.label || field.label === "Untitled") {
-        field.label = "Deposit Total";
+        field.label = "Deposit Due";
       }
 
       if (typeof window.SetFieldProperty === "function") {

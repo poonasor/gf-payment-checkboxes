@@ -36,17 +36,17 @@ class GF_Checkbox_Products_Pricing
         // Add support for conditional logic on pricing
         add_filter('gform_pre_render', [$this, 'pre_render_support']);
 
-        // Stripe: add Deposit Total fields to the payment amount dropdown
+        // Stripe: add Deposit Due fields to the payment amount dropdown
         add_filter('gform_stripe_feed_settings_fields', [$this, 'stripe_feed_settings_fields'], 10, 2);
 
         add_filter('gform_addon_feed_settings_fields', [$this, 'addon_feed_settings_fields'], 10, 2);
 
-        // Payment processing: override payment amount when a Deposit Total field is selected
+        // Payment processing: override payment amount when a Deposit Due field is selected
         add_filter('gform_submission_data_pre_process_payment', [$this, 'submission_data_pre_process_payment'], 10, 4);
     }
 
     /**
-     * Add Deposit Total fields to the Stripe feed payment amount dropdown.
+     * Add Deposit Due fields to the Stripe feed payment amount dropdown.
      *
      * @param array $fields Feed settings fields.
      * @param array $form   Form object.
@@ -114,7 +114,7 @@ class GF_Checkbox_Products_Pricing
     }
 
     /**
-     * Override the payment_amount for payment add-ons when a Deposit Total field is selected.
+     * Override the payment_amount for payment add-ons when a Deposit Due field is selected.
      *
      * @param array $submission_data Submission data.
      * @param array $feed            Feed object.

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Deposit Total Field Class
+ * Deposit Due Field Class
  *
  * Defines a field type that accepts a percentage and displays a calculated deposit amount.
  *
@@ -19,7 +19,7 @@ if (!class_exists('GF_Field')) {
 }
 
 /**
- * Deposit Total field
+ * Deposit Due field
  */
 class GF_Field_Deposit_Total extends GF_Field
 {
@@ -37,7 +37,7 @@ class GF_Field_Deposit_Total extends GF_Field
      */
     public function get_form_editor_field_title()
     {
-        return esc_attr__('Deposit Total', 'gf-payment-checkboxes');
+        return esc_attr__('Deposit Due', 'gf-payment-checkboxes');
     }
 
     public function get_form_editor_inline_script_on_page_render()
@@ -107,7 +107,7 @@ class GF_Field_Deposit_Total extends GF_Field
         $field_id = absint($this->id);
 
         if ($this->is_form_editor()) {
-            return '<div class="ginput_container">Deposit total percentage will appear here</div>';
+            return '<div class="ginput_container">Deposit Due percentage will appear here</div>';
         }
 
         $input_id = sprintf('input_%d_%d', $form_id, $field_id);
