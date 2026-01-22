@@ -219,6 +219,11 @@ class GF_Checkbox_Products_Pricing
         if (!in_array('deposit_total', $pricing_fields, true)) {
             $pricing_fields[] = 'deposit_total';
         }
+
+        if (!in_array('fees', $pricing_fields, true)) {
+            $pricing_fields[] = 'fees';
+        }
+
         return $pricing_fields;
     }
 
@@ -240,33 +245,40 @@ class GF_Checkbox_Products_Pricing
         }
 
         foreach ($form['fields'] as $field) {
-            // Only process our custom field type
-            if (!is_object($field) || $field->type !== 'checkbox_product') {
+            if (!is_object($field)) {
                 continue;
             }
 
-            $field_id = $field->id;
-            $selected_values = rgar($entry, $field_id);
+            // Process checkbox product fields
+            if ($field->type === 'checkbox_product') {
+                $field_id = $field->id;
+                $selected_values = rgar($entry, $field_id);
 
-            // Skip if no selections
-            if (empty($selected_values)) {
-                continue;
+                // Skip if no selections
+                if (empty($selected_values)) {
+                    continue;
+                }
+
+                // Parse selected values
+                $selected = is_array($selected_values)
+                    ? $selected_values
+                    : explode(',', $selected_values);
+
+                // Remove empty values
+                $selected = array_filter($selected);
+
+                if (empty($selected)) {
+                    continue;
+                }
+
+                // Add each selected item as a product
+                $this->add_selected_products($product_info, $field, $selected, $entry);
             }
 
-            // Parse selected values
-            $selected = is_array($selected_values)
-                ? $selected_values
-                : explode(',', $selected_values);
-
-            // Remove empty values
-            $selected = array_filter($selected);
-
-            if (empty($selected)) {
-                continue;
+            // Process fees fields
+            if ($field->type === 'fees') {
+                $this->add_fees_to_order($product_info, $field, $entry);
             }
-
-            // Add each selected item as a product
-            $this->add_selected_products($product_info, $field, $selected, $entry);
         }
 
         return $product_info;
@@ -305,6 +317,43 @@ class GF_Checkbox_Products_Pricing
             // Add to products array
             $product_info['products'][$product_key] = [
                 'name'       => rgar($choice, 'text', ''),
+                'price'      => $price,
+                'quantity'   => 1,
+                'options'    => [],
+                'is_shipping' => false,
+                'field_id'   => $field_id,
+            ];
+        }
+    }
+
+    /**
+     * Add fees to product info array
+     *
+     * @param array  $product_info Product information (passed by reference)
+     * @param object $field        Field object
+     * @param array  $entry        Entry object
+     * @return void
+     */
+    private function add_fees_to_order(&$product_info, $field, $entry)
+    {
+        if (!isset($field->fees) || !is_array($field->fees)) {
+            return;
+        }
+
+        $field_id = $field->id;
+
+        foreach ($field->fees as $index => $fee) {
+            $label = isset($fee['label']) ? $fee['label'] : '';
+            $price = isset($fee['price']) ? GFCommon::to_number($fee['price']) : 0;
+
+            if (empty($label) || $price <= 0) {
+                continue;
+            }
+
+            $product_key = 'fee_' . $field_id . '_' . $index;
+
+            $product_info['products'][$product_key] = [
+                'name'       => $label,
                 'price'      => $price,
                 'quantity'   => 1,
                 'options'    => [],
@@ -366,7 +415,7 @@ class GF_Checkbox_Products_Pricing
                 continue;
             }
 
-            if ($field->type === 'checkbox_product' || $field->type === 'deposit_total') {
+            if ($field->type === 'checkbox_product' || $field->type === 'deposit_total' || $field->type === 'fees') {
                 return true;
             }
         }

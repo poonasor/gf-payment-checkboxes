@@ -30,6 +30,15 @@
     ".admin_label_setting, " +
     ".css_class_setting";
 
+  window.fieldSettings.fees =
+    ".label_setting, " +
+    ".description_setting, " +
+    ".fees_setting, " +
+    ".rules_setting, " +
+    ".conditional_logic_field_setting, " +
+    ".admin_label_setting, " +
+    ".css_class_setting";
+
   // Bind to field settings load event
   $(document).on("gform_load_field_settings", function (event, field, form) {
     if (field.type === "checkbox_product") {
@@ -42,6 +51,15 @@
       if (!field.label || field.label === "Untitled") {
         window.SetFieldProperty("label", "Deposit Due");
         $("#field_label").val("Deposit Due").trigger("input").trigger("change");
+      }
+    }
+
+    if (field.type === "fees") {
+      loadFees(field);
+
+      if (!field.label || field.label === "Untitled") {
+        window.SetFieldProperty("label", "Fees");
+        $("#field_label").val("Fees").trigger("input").trigger("change");
       }
     }
   });
@@ -278,5 +296,143 @@
     var div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Load existing fees into the settings UI
+   *
+   * @param {Object} field The field object
+   */
+  function loadFees(field) {
+    var container = $("#fees_container");
+    container.empty();
+
+    if (field.fees && field.fees.length > 0) {
+      $.each(field.fees, function (index, fee) {
+        addFeeRow(fee.label || "", fee.price || "", index);
+      });
+    } else {
+      addFeeRow("", "", 0);
+    }
+  }
+
+  /**
+   * Add a new fee (global function for onclick handler)
+   */
+  window.gfAddFee = function () {
+    addFeeRow();
+  };
+
+  /**
+   * Add a new fee row to the settings UI
+   *
+   * @param {string} label Fee label
+   * @param {string} price Fee price
+   * @param {number} index Fee index
+   */
+  function addFeeRow(label, price, index) {
+    label = label || "";
+    price = price || "";
+
+    var container = $("#fees_container");
+    var newIndex =
+      typeof index !== "undefined"
+        ? index
+        : container.find(".gf-fee-row").length;
+
+    var i18n = window.gfCheckboxProductsAdmin
+      ? window.gfCheckboxProductsAdmin.i18n
+      : {};
+
+    var row = $("<div>", {
+      class: "gf-fee-row",
+      "data-index": newIndex,
+    });
+
+    var labelInput = $("<input>", {
+      type: "text",
+      class: "gf-fee-label",
+      placeholder: i18n.feeLabelPlaceholder || "Fee Name (e.g., Travel Fee)",
+      value: escapeHtml(label),
+    });
+
+    var priceInput = $("<input>", {
+      type: "text",
+      class: "gf-fee-price",
+      placeholder: i18n.feePricePlaceholder || "0.00",
+      value: price,
+    });
+
+    var deleteBtn = $("<button>", {
+      type: "button",
+      class: "button gf-delete-fee",
+      html: '<span class="dashicons dashicons-trash"></span>',
+    });
+
+    row.append(
+      $('<div class="gf-fee-column gf-fee-column-label">').append(
+        $("<label>").text("Label:"),
+        labelInput,
+      ),
+      $('<div class="gf-fee-column gf-fee-column-price">').append(
+        $("<label>").text("Price:"),
+        priceInput,
+      ),
+      $('<div class="gf-fee-column gf-fee-column-actions">').append(deleteBtn),
+    );
+
+    container.append(row);
+
+    row.find("input").on("input change", function () {
+      saveFees();
+    });
+
+    row.find(".gf-delete-fee").on("click", function (e) {
+      e.preventDefault();
+      deleteFeeRow(row);
+    });
+  }
+
+  /**
+   * Delete a fee row
+   *
+   * @param {jQuery} row The row element to delete
+   */
+  function deleteFeeRow(row) {
+    var container = $("#fees_container");
+    var i18n = window.gfCheckboxProductsAdmin
+      ? window.gfCheckboxProductsAdmin.i18n
+      : {};
+
+    if (container.find(".gf-fee-row").length <= 1) {
+      alert(i18n.confirmDeleteFee || "You must have at least one fee.");
+      return;
+    }
+
+    row.fadeOut(200, function () {
+      row.remove();
+      saveFees();
+    });
+  }
+
+  /**
+   * Save fees to the field object
+   */
+  function saveFees() {
+    var fees = [];
+
+    $("#fees_container .gf-fee-row").each(function () {
+      var label = $(this).find(".gf-fee-label").val();
+      var price = $(this).find(".gf-fee-price").val();
+
+      if (label && label.trim()) {
+        fees.push({
+          label: label.trim(),
+          price: parseFloat(price) || 0,
+        });
+      }
+    });
+
+    window.SetFieldProperty("fees", fees);
   }
 })(jQuery);

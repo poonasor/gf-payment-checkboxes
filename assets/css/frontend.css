@@ -221,3 +221,82 @@
     font-weight: bold;
   }
 }
+
+/* ========================================
+   Fees Field Styles
+   ======================================== */
+
+.ginput_container_fees {
+  padding: 12px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.gfield_fees_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gfield_fee_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.gfield_fee_item:last-child {
+  border-bottom: none;
+}
+
+.gfield_fee_label {
+  font-weight: 500;
+  color: #333;
+}
+
+.gfield_fee_price {
+  font-weight: 600;
+  color: #2271b1;
+  font-family: monospace;
+}
+
+/* ========================================
+   Fees Field - Dark Mode
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .ginput_container_fees {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  .gfield_fee_item {
+    border-bottom-color: #444;
+  }
+
+  .gfield_fee_label {
+    color: #e0e0e0;
+  }
+
+  .gfield_fee_price {
+    color: #6eb4e0;
+  }
+}
+
+/* ========================================
+   Fees Field - Print Styles
+   ======================================== */
+
+@media print {
+  .ginput_container_fees {
+    background: #fff;
+    border: 1px solid #000;
+  }
+
+  .gfield_fee_label,
+  .gfield_fee_price {
+    color: #000;
+  }
+}

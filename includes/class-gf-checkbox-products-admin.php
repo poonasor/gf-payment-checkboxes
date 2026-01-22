@@ -77,6 +77,25 @@ class GF_Checkbox_Products_Admin
                 <?php esc_html_e('Add product choices with individual prices. Each checkbox can have a different price.', 'gf-payment-checkboxes'); ?>
             </p>
         </li>
+
+        <li class="fees_setting field_setting">
+            <label class="section_label" for="fees_container">
+                <?php esc_html_e('Fees', 'gf-payment-checkboxes'); ?>
+                <?php gform_tooltip('form_field_fees'); ?>
+            </label>
+
+            <div id="fees_container" class="gf-fees-container">
+                <!-- Dynamic fees will be populated via JavaScript -->
+            </div>
+
+            <button type="button" class="button gf-add-fee" style="margin-top: 10px;" onclick="gfAddFee(); return false;">
+                <?php esc_html_e('Add Fee', 'gf-payment-checkboxes'); ?>
+            </button>
+
+            <p class="description" style="margin-top: 10px;">
+                <?php esc_html_e('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These will be added to the form total.', 'gf-payment-checkboxes'); ?>
+            </p>
+        </li>
 <?php
     }
 
@@ -138,6 +157,12 @@ class GF_Checkbox_Products_Admin
             '<h6>%s</h6>%s',
             esc_html__('Deposit Percentage', 'gf-payment-checkboxes'),
             esc_html__('Enter a percentage (e.g. 10% or 50) to calculate the deposit amount from the form total.', 'gf-payment-checkboxes')
+        );
+
+        $tooltips['form_field_fees'] = sprintf(
+            '<h6>%s</h6>%s',
+            esc_html__('Fees', 'gf-payment-checkboxes'),
+            esc_html__('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These fees will be automatically added to the form total.', 'gf-payment-checkboxes')
         );
 
         return $tooltips;

@@ -227,6 +227,28 @@
       total += price;
     });
 
+    // Add fees to the total
+    var feesTotal = calculateFeesTotal(formId);
+    total += feesTotal;
+
+    return total;
+  }
+
+  /**
+   * Calculate total for all fees in a form
+   *
+   * @param {number} formId Form ID
+   * @return {number} Total fees
+   */
+  function calculateFeesTotal(formId) {
+    var total = 0;
+    var $form = $("#gform_" + formId);
+
+    $form.find(".gfield_fee_item").each(function () {
+      var price = parseFloat($(this).data("price")) || 0;
+      total += price;
+    });
+
     return total;
   }
 

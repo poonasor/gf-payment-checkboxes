@@ -56,6 +56,7 @@ class GF_Checkbox_Products_Bootstrap
         // Register the custom field
         GF_Fields::register(new GF_Field_Checkbox_Product());
         GF_Fields::register(new GF_Field_Deposit_Total());
+        GF_Fields::register(new GF_Field_Fees());
 
         // Initialize admin and pricing classes
         new GF_Checkbox_Products_Admin();
@@ -85,6 +86,7 @@ class GF_Checkbox_Products_Bootstrap
     {
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-checkbox-product.php';
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-deposit-total.php';
+        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-fees.php';
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-checkbox-products-admin.php';
         require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-checkbox-products-pricing.php';
     }
