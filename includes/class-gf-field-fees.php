@@ -72,7 +72,7 @@ class CHECPRFO_Field_Fees extends GF_Field
      */
     public function get_form_editor_field_icon()
     {
-        return 'gform-icon gform-icon--price';
+        return 'gform-icon gform-icon--total';
     }
 
     /**
