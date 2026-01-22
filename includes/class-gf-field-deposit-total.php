@@ -21,7 +21,7 @@ if (!class_exists('GF_Field')) {
 /**
  * Deposit Due field
  */
-class GF_Field_Deposit_Total extends GF_Field
+class CHECPRFO_Field_Deposit_Total extends GF_Field
 {
     /**
      * Field type identifier
@@ -37,7 +37,7 @@ class GF_Field_Deposit_Total extends GF_Field
      */
     public function get_form_editor_field_title()
     {
-        return esc_attr__('Deposit Due', 'gf-payment-checkboxes');
+        return esc_attr__('Deposit Due', 'checkbox-products-for-gravity-forms');
     }
 
     public function get_form_editor_inline_script_on_page_render()

@@ -112,7 +112,9 @@ gf-checkbox-products/
 ### Key Classes
 
 #### `GF_Field_Checkbox_Product`
+
 The main field class that extends `GF_Field`. Handles:
+
 - Field rendering on frontend
 - Value submission and storage
 - Entry display formatting
@@ -120,13 +122,17 @@ The main field class that extends `GF_Field`. Handles:
 - Validation
 
 #### `GF_Checkbox_Products_Admin`
+
 Handles admin functionality:
+
 - Field settings UI in form editor
 - Admin scripts and styles
 - Tooltips and help text
 
 #### `GF_Checkbox_Products_Pricing`
+
 Manages pricing integration:
+
 - Integration with GF pricing system
 - Payment gateway compatibility
 - Frontend price calculation scripts
@@ -171,12 +177,12 @@ Add custom CSS classes in the field settings:
 ```css
 /* Target specific checkbox products field */
 .my-custom-class .gfield_checkbox_product label {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 /* Card-style layout (built-in) */
 .gf-checkbox-card-style .gfield_checkbox_product label {
-    /* Styles are already included */
+  /* Styles are already included */
 }
 ```
 
@@ -250,7 +256,7 @@ If the total isn't updating when checkboxes are selected:
 For support, please:
 
 1. Check the [FAQ section](#faq)
-2. Search existing [GitHub Issues](https://github.com/yourusername/gf-checkbox-products/issues)
+2. Search existing [GitHub Issues](https://github.com/poonasor/gf-payment-checkboxes/issues)
 3. Create a new issue with detailed information
 
 ## Contributing
@@ -267,18 +273,21 @@ Contributions are welcome! Please:
 Planned features for future versions:
 
 ### Version 1.1
+
 - Quantity input per checkbox
 - Product images
 - Inventory tracking
 - Choice-level conditional logic
 
 ### Version 1.2
+
 - Bulk pricing/discounts
 - Choice categories
 - Min/max selection limits
 - Dynamic pricing formulas
 
 ### Version 2.0
+
 - WooCommerce integration
 - Subscription support
 - Advanced reporting
@@ -303,13 +312,14 @@ GNU General Public License for more details.
 
 ## Credits
 
-Developed by [Your Name]
+Developed by Ricky Poon
 
 Built with [Gravity Forms](https://www.gravityforms.com/)
 
 ## Changelog
 
 ### 1.0.0 - 2024-01-17
+
 - Initial release
 - Checkbox Products field type
 - Individual product pricing

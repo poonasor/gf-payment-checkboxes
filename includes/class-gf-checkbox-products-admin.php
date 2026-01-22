@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Admin functionality for Checkbox Product field
  */
-class GF_Checkbox_Products_Admin
+class CHECPRFO_Admin
 {
 
     /**
@@ -53,7 +53,7 @@ class GF_Checkbox_Products_Admin
 ?>
         <li class="deposit_total_percent_setting field_setting">
             <label class="section_label" for="field_deposit_total_percent">
-                <?php esc_html_e('Deposit Percentage', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Deposit Percentage', 'checkbox-products-for-gravity-forms'); ?>
                 <?php gform_tooltip('form_field_deposit_total_percent'); ?>
             </label>
             <input type="text" id="field_deposit_total_percent" onkeyup="SetFieldProperty('depositPercent', this.value);" onchange="SetFieldProperty('depositPercent', this.value);" />
@@ -61,7 +61,7 @@ class GF_Checkbox_Products_Admin
 
         <li class="checkbox_product_choices_setting field_setting">
             <label class="section_label" for="checkbox_product_choices_container">
-                <?php esc_html_e('Product Choices', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Product Choices', 'checkbox-products-for-gravity-forms'); ?>
                 <?php gform_tooltip('form_field_checkbox_product_choices'); ?>
             </label>
 
@@ -70,17 +70,17 @@ class GF_Checkbox_Products_Admin
             </div>
 
             <button type="button" class="button gf-add-checkbox-product-choice" style="margin-top: 10px;" onclick="gfCheckboxProductAddChoice(); return false;">
-                <?php esc_html_e('Add Product Choice', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Add Product Choice', 'checkbox-products-for-gravity-forms'); ?>
             </button>
 
             <p class="description" style="margin-top: 10px;">
-                <?php esc_html_e('Add product choices with individual prices. Each checkbox can have a different price.', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Add product choices with individual prices. Each checkbox can have a different price.', 'checkbox-products-for-gravity-forms'); ?>
             </p>
         </li>
 
         <li class="fees_setting field_setting">
             <label class="section_label" for="fees_container">
-                <?php esc_html_e('Fees', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Fees', 'checkbox-products-for-gravity-forms'); ?>
                 <?php gform_tooltip('form_field_fees'); ?>
             </label>
 
@@ -89,11 +89,11 @@ class GF_Checkbox_Products_Admin
             </div>
 
             <button type="button" class="button gf-add-fee" style="margin-top: 10px;" onclick="gfAddFee(); return false;">
-                <?php esc_html_e('Add Fee', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Add Fee', 'checkbox-products-for-gravity-forms'); ?>
             </button>
 
             <p class="description" style="margin-top: 10px;">
-                <?php esc_html_e('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These will be added to the form total.', 'gf-payment-checkboxes'); ?>
+                <?php esc_html_e('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These will be added to the form total.', 'checkbox-products-for-gravity-forms'); ?>
             </p>
         </li>
 <?php
@@ -109,9 +109,9 @@ class GF_Checkbox_Products_Admin
         // Enqueue admin JavaScript
         wp_enqueue_script(
             'gf-checkbox-products-admin',
-            GF_CHECKBOX_PRODUCTS_URL . 'assets/js/admin.js',
+            CHECPRFO_URL . 'assets/js/admin.js',
             ['jquery', 'gform_form_editor'],
-            GF_CHECKBOX_PRODUCTS_VERSION,
+            CHECPRFO_VERSION,
             true
         );
 
@@ -121,10 +121,10 @@ class GF_Checkbox_Products_Admin
             'gfCheckboxProductsAdmin',
             [
                 'i18n' => [
-                    'confirmDelete' => esc_html__('Are you sure you want to delete this choice?', 'gf-payment-checkboxes'),
-                    'labelPlaceholder' => esc_attr__('Product Name', 'gf-payment-checkboxes'),
-                    'pricePlaceholder' => esc_attr__('0.00', 'gf-payment-checkboxes'),
-                    'valuePlaceholder' => esc_attr__('value', 'gf-payment-checkboxes'),
+                    'confirmDelete' => esc_html__('Are you sure you want to delete this choice?', 'checkbox-products-for-gravity-forms'),
+                    'labelPlaceholder' => esc_attr__('Product Name', 'checkbox-products-for-gravity-forms'),
+                    'pricePlaceholder' => esc_attr__('0.00', 'checkbox-products-for-gravity-forms'),
+                    'valuePlaceholder' => esc_attr__('value', 'checkbox-products-for-gravity-forms'),
                 ],
                 'currency' => GFCommon::get_currency(),
             ]
@@ -133,9 +133,9 @@ class GF_Checkbox_Products_Admin
         // Enqueue admin CSS
         wp_enqueue_style(
             'gf-checkbox-products-admin',
-            GF_CHECKBOX_PRODUCTS_URL . 'assets/css/admin.css',
+            CHECPRFO_URL . 'assets/css/admin.css',
             [],
-            GF_CHECKBOX_PRODUCTS_VERSION
+            CHECPRFO_VERSION
         );
     }
 
@@ -149,20 +149,20 @@ class GF_Checkbox_Products_Admin
     {
         $tooltips['form_field_checkbox_product_choices'] = sprintf(
             '<h6>%s</h6>%s',
-            esc_html__('Product Choices', 'gf-payment-checkboxes'),
-            esc_html__('Add the products you want users to select from. Each product can have its own price. The selected products will be added to the form total.', 'gf-payment-checkboxes')
+            esc_html__('Product Choices', 'checkbox-products-for-gravity-forms'),
+            esc_html__('Add the products you want users to select from. Each product can have its own price. The selected products will be added to the form total.', 'checkbox-products-for-gravity-forms')
         );
 
         $tooltips['form_field_deposit_total_percent'] = sprintf(
             '<h6>%s</h6>%s',
-            esc_html__('Deposit Percentage', 'gf-payment-checkboxes'),
-            esc_html__('Enter a percentage (e.g. 10% or 50) to calculate the deposit amount from the form total.', 'gf-payment-checkboxes')
+            esc_html__('Deposit Percentage', 'checkbox-products-for-gravity-forms'),
+            esc_html__('Enter a percentage (e.g. 10% or 50) to calculate the deposit amount from the form total.', 'checkbox-products-for-gravity-forms')
         );
 
         $tooltips['form_field_fees'] = sprintf(
             '<h6>%s</h6>%s',
-            esc_html__('Fees', 'gf-payment-checkboxes'),
-            esc_html__('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These fees will be automatically added to the form total.', 'gf-payment-checkboxes')
+            esc_html__('Fees', 'checkbox-products-for-gravity-forms'),
+            esc_html__('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These fees will be automatically added to the form total.', 'checkbox-products-for-gravity-forms')
         );
 
         return $tooltips;
@@ -178,7 +178,7 @@ class GF_Checkbox_Products_Admin
     public function field_type_title($title, $type)
     {
         if ($type === 'checkbox_product') {
-            return esc_html__('Checkbox Products', 'gf-payment-checkboxes');
+            return esc_html__('Checkbox Products', 'checkbox-products-for-gravity-forms');
         }
 
         return $title;

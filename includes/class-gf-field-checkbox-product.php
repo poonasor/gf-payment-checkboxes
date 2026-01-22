@@ -23,7 +23,7 @@ if (!class_exists('GF_Field')) {
  *
  * Extends GF_Field to create a checkbox-based product selector
  */
-class GF_Field_Checkbox_Product extends GF_Field
+class CHECPRFO_Field_Checkbox_Product extends GF_Field
 {
 
     /**
@@ -40,7 +40,7 @@ class GF_Field_Checkbox_Product extends GF_Field
      */
     public function get_form_editor_field_title()
     {
-        return esc_attr__('Checkbox Products', 'gf-payment-checkboxes');
+        return esc_attr__('Checkbox Products', 'checkbox-products-for-gravity-forms');
     }
 
     /**
@@ -137,7 +137,7 @@ class GF_Field_Checkbox_Product extends GF_Field
         } else {
             // No choices defined
             $html .= '<div class="gchoice">';
-            $html .= esc_html__('No product choices configured.', 'gf-payment-checkboxes');
+            $html .= esc_html__('No product choices configured.', 'checkbox-products-for-gravity-forms');
             $html .= '</div>';
         }
 
@@ -348,7 +348,7 @@ class GF_Field_Checkbox_Product extends GF_Field
 
         return sprintf(
             /* translators: 1: number of items, 2: total price */
-            esc_html__('%1$d item(s) - %2$s', 'gf-payment-checkboxes'),
+            esc_html__('%1$d item(s) - %2$s', 'checkbox-products-for-gravity-forms'),
             $count,
             GFCommon::to_money($total, $currency)
         );
@@ -401,7 +401,7 @@ class GF_Field_Checkbox_Product extends GF_Field
             if (empty($selected) || (count($selected) === 1 && empty($selected[0]))) {
                 $this->failed_validation = true;
                 $this->validation_message = empty($this->errorMessage)
-                    ? esc_html__('This field is required. Please select at least one option.', 'gf-payment-checkboxes')
+                    ? esc_html__('This field is required. Please select at least one option.', 'checkbox-products-for-gravity-forms')
                     : $this->errorMessage;
             }
         }

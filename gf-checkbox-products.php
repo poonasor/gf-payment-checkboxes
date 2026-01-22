@@ -7,7 +7,7 @@
  * Version: 1.0.0
  * Author: Ricky Poon
  * Author URI: https://perpetualmedia.ca/
- * Text Domain: gf-payment-checkboxes
+ * Text Domain: checkbox-products-for-gravity-forms
  * Domain Path: /languages
  * Requires PHP: 7.4
  * Requires at least: 5.8
@@ -21,20 +21,20 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('GF_CHECKBOX_PRODUCTS_VERSION', '1.0.0');
-define('GF_CHECKBOX_PRODUCTS_PATH', plugin_dir_path(__FILE__));
-define('GF_CHECKBOX_PRODUCTS_URL', plugin_dir_url(__FILE__));
-define('GF_CHECKBOX_PRODUCTS_MIN_GF_VERSION', '2.5');
+define('CHECPRFO_VERSION', '1.0.0');
+define('CHECPRFO_PATH', plugin_dir_path(__FILE__));
+define('CHECPRFO_URL', plugin_dir_url(__FILE__));
+define('CHECPRFO_MIN_GF_VERSION', '2.5');
 
 // Initialize plugin after Gravity Forms loads
-add_action('gform_loaded', ['GF_Checkbox_Products_Bootstrap', 'load'], 5);
+add_action('gform_loaded', ['CHECPRFO_Bootstrap', 'load'], 5);
 
 /**
  * Bootstrap class for the plugin
  *
  * Handles plugin initialization and dependency checks
  */
-class GF_Checkbox_Products_Bootstrap
+class CHECPRFO_Bootstrap
 {
 
     /**
@@ -54,13 +54,13 @@ class GF_Checkbox_Products_Bootstrap
         self::load_files();
 
         // Register the custom field
-        GF_Fields::register(new GF_Field_Checkbox_Product());
-        GF_Fields::register(new GF_Field_Deposit_Total());
-        GF_Fields::register(new GF_Field_Fees());
+        GF_Fields::register(new CHECPRFO_Field_Checkbox_Product());
+        GF_Fields::register(new CHECPRFO_Field_Deposit_Total());
+        GF_Fields::register(new CHECPRFO_Field_Fees());
 
         // Initialize admin and pricing classes
-        new GF_Checkbox_Products_Admin();
-        new GF_Checkbox_Products_Pricing();
+        new CHECPRFO_Admin();
+        new CHECPRFO_Pricing();
     }
 
     /**
@@ -74,7 +74,7 @@ class GF_Checkbox_Products_Bootstrap
             return false;
         }
 
-        return version_compare(GFForms::$version, GF_CHECKBOX_PRODUCTS_MIN_GF_VERSION, '>=');
+        return version_compare(GFForms::$version, CHECPRFO_MIN_GF_VERSION, '>=');
     }
 
     /**
@@ -84,11 +84,11 @@ class GF_Checkbox_Products_Bootstrap
      */
     private static function load_files()
     {
-        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-checkbox-product.php';
-        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-deposit-total.php';
-        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-field-fees.php';
-        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-checkbox-products-admin.php';
-        require_once GF_CHECKBOX_PRODUCTS_PATH . 'includes/class-gf-checkbox-products-pricing.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-field-checkbox-product.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-field-deposit-total.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-field-fees.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-checkbox-products-admin.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-checkbox-products-pricing.php';
     }
 
     /**
@@ -100,10 +100,10 @@ class GF_Checkbox_Products_Bootstrap
     {
         $message = sprintf(
             /* translators: %s: minimum Gravity Forms version */
-            esc_html__('Checkbox Products for Gravity Forms requires Gravity Forms %s or higher to be installed and activated.', 'gf-payment-checkboxes'),
-            GF_CHECKBOX_PRODUCTS_MIN_GF_VERSION
+            esc_html__('Checkbox Products for Gravity Forms requires Gravity Forms %s or higher to be installed and activated.', 'checkbox-products-for-gravity-forms'),
+            CHECPRFO_MIN_GF_VERSION
         );
 
-        echo '<div class="error"><p><strong>' . esc_html__('Checkbox Products for Gravity Forms', 'gf-payment-checkboxes') . ':</strong> ' . esc_html($message) . '</p></div>';
+        echo '<div class="error"><p><strong>' . esc_html__('Checkbox Products for Gravity Forms', 'checkbox-products-for-gravity-forms') . ':</strong> ' . esc_html($message) . '</p></div>';
     }
 }

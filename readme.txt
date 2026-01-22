@@ -1,5 +1,5 @@
 === Checkbox Products for Gravity Forms ===
-Contributors: rickypoon
+Contributors: poonasor
 Tags: gravity forms, products, checkbox, pricing, payments
 Requires at least: 5.8
 Tested up to: 6.9
@@ -52,15 +52,15 @@ Adds a checkbox-based product field to Gravity Forms for selecting multiple prod
 
 = Support =
 
-For support, feature requests, or bug reports, please visit our [GitHub repository](https://github.com/yourusername/gf-checkbox-products).
+For support, feature requests, or bug reports, please visit our [GitHub repository](https://github.com/poonasor/gf-payment-checkboxes).
 
 == Installation ==
 
-= Automatic Installation =
+= From WordPress.org =
 
 1. Log in to your WordPress admin panel
 2. Navigate to Plugins > Add New
-3. Search for "Gravity Forms Checkbox Products"
+3. Search for "Checkbox Products for Gravity Forms"
 4. Click "Install Now" and then "Activate"
 
 = Manual Installation =
@@ -142,11 +142,11 @@ Initial release of Gravity Forms Checkbox Products.
 
 = Documentation =
 
-For detailed documentation, examples, and code snippets, visit our [documentation site](https://github.com/yourusername/gf-checkbox-products/wiki).
+For detailed documentation, examples, and code snippets, visit our [GitHub repository](https://github.com/poonasor/gf-payment-checkboxes).
 
 = Contributing =
 
-We welcome contributions! Please see our [contributing guidelines](https://github.com/yourusername/gf-checkbox-products/blob/main/CONTRIBUTING.md).
+We welcome contributions! Please visit our [GitHub repository](https://github.com/poonasor/gf-payment-checkboxes) to contribute.
 
 = Privacy Policy =
 

@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Pricing functionality for Checkbox Product field
  */
-class GF_Checkbox_Products_Pricing
+class CHECPRFO_Pricing
 {
 
     /**
@@ -380,9 +380,9 @@ class GF_Checkbox_Products_Pricing
         // Enqueue frontend JavaScript
         wp_enqueue_script(
             'gf-checkbox-products-frontend',
-            GF_CHECKBOX_PRODUCTS_URL . 'assets/js/frontend.js',
+            CHECPRFO_URL . 'assets/js/frontend.js',
             ['jquery', 'gform_gravityforms'],
-            GF_CHECKBOX_PRODUCTS_VERSION,
+            CHECPRFO_VERSION,
             true
         );
 
@@ -392,9 +392,9 @@ class GF_Checkbox_Products_Pricing
         // Enqueue frontend CSS
         wp_enqueue_style(
             'gf-checkbox-products-frontend',
-            GF_CHECKBOX_PRODUCTS_URL . 'assets/css/frontend.css',
+            CHECPRFO_URL . 'assets/css/frontend.css',
             [],
-            GF_CHECKBOX_PRODUCTS_VERSION
+            CHECPRFO_VERSION
         );
     }
 
