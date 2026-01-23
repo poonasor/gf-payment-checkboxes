@@ -290,6 +290,11 @@ class CHECPRFO_Pricing
             return $product_info;
         }
 
+        // Debug logging
+        if (class_exists('GFCommon') && method_exists('GFCommon', 'log_debug')) {
+            GFCommon::log_debug(__METHOD__ . '(): Entry data: ' . print_r($entry, true));
+        }
+
         foreach ($form['fields'] as $field) {
             if (!is_object($field)) {
                 continue;
@@ -299,6 +304,11 @@ class CHECPRFO_Pricing
             if ($field->type === 'checkbox_product') {
                 $field_id = $field->id;
                 $selected_values = rgar($entry, $field_id);
+
+                // Debug logging
+                if (class_exists('GFCommon') && method_exists('GFCommon', 'log_debug')) {
+                    GFCommon::log_debug(__METHOD__ . '(): Field ID ' . $field_id . ' selected values: ' . print_r($selected_values, true));
+                }
 
                 // Skip if no selections
                 if (empty($selected_values)) {
@@ -330,6 +340,11 @@ class CHECPRFO_Pricing
             if ($field->type === 'distance_pricing') {
                 $this->add_distance_pricing_to_order($product_info, $field, $entry);
             }
+        }
+
+        // Debug logging
+        if (class_exists('GFCommon') && method_exists('GFCommon', 'log_debug')) {
+            GFCommon::log_debug(__METHOD__ . '(): Final product_info: ' . print_r($product_info, true));
         }
 
         return $product_info;
