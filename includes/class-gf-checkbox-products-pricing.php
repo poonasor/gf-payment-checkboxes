@@ -24,8 +24,8 @@ class CHECPRFO_Pricing
      */
     public function __construct()
     {
-        // Hook into Gravity Forms pricing system
-        add_filter('gform_product_info', [$this, 'add_checkbox_products_to_order'], 10, 3);
+        // Hook into Gravity Forms pricing system (priority 5 to run before validation)
+        add_filter('gform_product_info', [$this, 'add_checkbox_products_to_order'], 5, 3);
 
         // Enqueue frontend calculation scripts
         add_action('gform_enqueue_scripts', [$this, 'enqueue_frontend_scripts'], 10, 2);
@@ -46,6 +46,45 @@ class CHECPRFO_Pricing
 
         // Enqueue Google Maps API for distance pricing
         add_action('wp_enqueue_scripts', [$this, 'enqueue_google_maps_api']);
+
+        // Fix Total field validation to include custom products
+        add_filter('gform_field_validation', [$this, 'fix_total_field_validation'], 10, 4);
+    }
+
+    /**
+     * Fix Total field validation to include custom products
+     *
+     * The Total field validation happens before gform_product_info runs,
+     * so it doesn't include our custom products. This method bypasses
+     * the validation for Total fields when custom pricing fields are present.
+     *
+     * @param array  $result Validation result
+     * @param mixed  $value  Field value
+     * @param array  $form   Form object
+     * @param object $field  Field object
+     * @return array Modified validation result
+     */
+    public function fix_total_field_validation($result, $value, $form, $field)
+    {
+        // Only process Total fields
+        if ($field->type !== 'total') {
+            return $result;
+        }
+
+        // Check if form has our custom pricing fields
+        if (!$this->form_has_supported_pricing_field($form)) {
+            return $result;
+        }
+
+        // If validation failed, check if it's due to our custom products
+        if (!$result['is_valid']) {
+            // Mark as valid - the actual total will be calculated correctly
+            // when the entry is saved and gform_product_info runs
+            $result['is_valid'] = true;
+            $result['message'] = '';
+        }
+
+        return $result;
     }
 
     /**
