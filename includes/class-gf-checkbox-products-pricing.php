@@ -202,9 +202,33 @@ class CHECPRFO_Pricing
             return $submission_data;
         }
 
-        $order = GFCommon::get_product_info($form, $entry);
-        $total = rgar($order, 'total');
-        $total = GFCommon::to_number($total);
+        if (method_exists('GFCommon', 'get_product_info')) {
+            $order = GFCommon::get_product_info($form, $entry);
+            $total = rgar($order, 'total');
+            $total = GFCommon::to_number($total);
+        } else {
+            $order = GFCommon::get_product_fields($form, $entry);
+            $order = $this->add_checkbox_products_to_order($order, $form, $entry);
+
+            $total = 0;
+            $products = rgar($order, 'products');
+            if (is_array($products)) {
+                foreach ($products as $product) {
+                    $price = GFCommon::to_number(rgar($product, 'price', 0));
+                    $qty = GFCommon::to_number(rgar($product, 'quantity', 1));
+                    if ($qty <= 0) {
+                        $qty = 1;
+                    }
+                    $total += ($price * $qty);
+                }
+            }
+
+            $shipping_price = rgars($order, 'shipping/price');
+            $shipping_price = GFCommon::to_number($shipping_price);
+            if ($shipping_price > 0) {
+                $total += $shipping_price;
+            }
+        }
 
         if ($total <= 0) {
             return $submission_data;
