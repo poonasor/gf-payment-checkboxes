@@ -33,6 +33,8 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
      */
     public $type = 'checkbox_product';
 
+    public $inputType = 'checkbox';
+
     /**
      * Get field title for form editor
      *
@@ -247,47 +249,46 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
     public function get_value_submission($field_values, $get_from_post_global = true)
     {
         $field_id = $this->id;
-        $input_name = 'input_' . $field_id;
+        $inputs = $this->get_entry_inputs();
 
-        if (isset($field_values[$input_name])) {
-            return $field_values[$input_name];
+        if (!is_array($inputs) || empty($inputs)) {
+            return [];
         }
 
-        if ($get_from_post_global) {
-            $values = [];
+        $submission = [];
 
-            $sources = [];
+        foreach ($inputs as $input) {
+            $input_id = rgar($input, 'id');
+            if (!$input_id) {
+                continue;
+            }
+
+            $value = '';
+
             if (is_array($field_values)) {
-                $sources[] = $field_values;
-            }
-            if (isset($_POST) && is_array($_POST)) {
-                $sources[] = $_POST;
-            }
-
-            $pattern = '/^input_' . preg_quote((string) $field_id, '/') . '[\._](\d+)$/';
-
-            foreach ($sources as $source) {
-                foreach ($source as $key => $value) {
-                    if (!is_string($key)) {
-                        continue;
-                    }
-
-                    if (!preg_match($pattern, $key)) {
-                        continue;
-                    }
-
-                    if ($value === '' || $value === null) {
-                        continue;
-                    }
-
-                    $values[] = $value;
+                if (array_key_exists('input_' . $input_id, $field_values)) {
+                    $value = $field_values['input_' . $input_id];
+                } else {
+                    $value = rgar($field_values, (string) $input_id);
                 }
             }
 
-            return $values;
+            if (($value === '' || $value === null) && $get_from_post_global && isset($_POST) && is_array($_POST)) {
+                $post_key_dot = 'input_' . $input_id; // input_1.4
+                $post_key_us = 'input_' . str_replace('.', '_', (string) $input_id); // input_1_4
+                if (array_key_exists($post_key_dot, $_POST)) {
+                    $value = $_POST[$post_key_dot];
+                } elseif (array_key_exists($post_key_us, $_POST)) {
+                    $value = $_POST[$post_key_us];
+                }
+            }
+
+            if ($value !== '' && $value !== null) {
+                $submission[(string) $input_id] = $value;
+            }
         }
 
-        return [];
+        return $submission;
     }
 
     /**

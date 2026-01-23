@@ -49,6 +49,7 @@ class CHECPRFO_Pricing
 
         // Fix Total field validation to include custom products
         add_filter('gform_field_validation', [$this, 'fix_total_field_validation'], 10, 4);
+        add_action('gform_after_submission', [$this, 'persist_checkbox_product_entry_values'], 10, 2);
     }
 
     /**
@@ -202,39 +203,45 @@ class CHECPRFO_Pricing
             return $submission_data;
         }
 
+        $deposit_field_ids = array_map(static function ($field) {
+            return (string) $field->id;
+        }, $deposit_fields);
+
         if (method_exists('GFCommon', 'get_product_info')) {
             $order = GFCommon::get_product_info($form, $entry);
-            $total = rgar($order, 'total');
-            $total = GFCommon::to_number($total);
         } else {
             $order = GFCommon::get_product_fields($form, $entry);
             $order = $this->add_checkbox_products_to_order($order, $form, $entry);
+        }
 
-            $total = 0;
-            $products = rgar($order, 'products');
-            if (is_array($products)) {
-                foreach ($products as $product) {
-                    $price = GFCommon::to_number(rgar($product, 'price', 0));
-                    $qty = GFCommon::to_number(rgar($product, 'quantity', 1));
-                    if ($qty <= 0) {
-                        $qty = 1;
-                    }
-                    $total += ($price * $qty);
+        $total_without_deposit = 0;
+        $products = rgar($order, 'products');
+        if (is_array($products)) {
+            foreach ($products as $product_key => $product) {
+                if (in_array((string) $product_key, $deposit_field_ids, true) || in_array((string) rgar($product, 'field_id'), $deposit_field_ids, true)) {
+                    continue;
                 }
-            }
 
-            $shipping_price = rgars($order, 'shipping/price');
-            $shipping_price = GFCommon::to_number($shipping_price);
-            if ($shipping_price > 0) {
-                $total += $shipping_price;
+                $price = GFCommon::to_number(rgar($product, 'price', 0));
+                $qty = GFCommon::to_number(rgar($product, 'quantity', 1));
+                if ($qty <= 0) {
+                    $qty = 1;
+                }
+                $total_without_deposit += ($price * $qty);
             }
         }
 
-        if ($total <= 0) {
+        $shipping_price = rgars($order, 'shipping/price');
+        $shipping_price = GFCommon::to_number($shipping_price);
+        if ($shipping_price > 0) {
+            $total_without_deposit += $shipping_price;
+        }
+
+        if ($total_without_deposit <= 0) {
             return $submission_data;
         }
 
-        $deposit_amount = round($total * ($percent / 100), 2);
+        $deposit_amount = round($total_without_deposit * ($percent / 100), 2);
         $submission_data['payment_amount'] = $deposit_amount;
 
         return $submission_data;
@@ -377,12 +384,19 @@ class CHECPRFO_Pricing
         }
 
         if (!empty($deposit_total_fields)) {
+            $deposit_field_ids = array_map(static function ($field) {
+                return (string) $field->id;
+            }, $deposit_total_fields);
+
             $total_without_deposit = 0;
 
             $products = rgar($product_info, 'products');
             if (is_array($products)) {
                 foreach ($products as $product_key => $product) {
                     if (!is_array($product)) {
+                        continue;
+                    }
+                    if (in_array((string) $product_key, $deposit_field_ids, true) || in_array((string) rgar($product, 'field_id'), $deposit_field_ids, true)) {
                         continue;
                     }
 
@@ -441,6 +455,50 @@ class CHECPRFO_Pricing
         }
 
         return $product_info;
+    }
+
+    public function persist_checkbox_product_entry_values($entry, $form)
+    {
+        if (!is_array(rgar($form, 'fields')) || !rgar($entry, 'id')) {
+            return;
+        }
+
+        $entry_id = rgar($entry, 'id');
+
+        foreach ($form['fields'] as $field) {
+            if (!is_object($field) || $field->type !== 'checkbox_product') {
+                continue;
+            }
+
+            if (!is_array($field->choices)) {
+                continue;
+            }
+
+            $field_id = $field->id;
+
+            foreach ($field->choices as $index => $choice) {
+                $input_id = (string) $field_id . '.' . ($index + 1);
+
+                $value = rgar($entry, $input_id);
+
+                if (($value === '' || $value === null) && isset($_POST) && is_array($_POST)) {
+                    $post_key_us = 'input_' . $field_id . '_' . ($index + 1);
+                    $post_key_dot = 'input_' . $input_id;
+
+                    if (array_key_exists($post_key_us, $_POST)) {
+                        $value = $_POST[$post_key_us];
+                    } elseif (array_key_exists($post_key_dot, $_POST)) {
+                        $value = $_POST[$post_key_dot];
+                    }
+                }
+
+                if ($value === '' || $value === null) {
+                    continue;
+                }
+
+                GFAPI::update_entry_field($entry_id, $input_id, $value);
+            }
+        }
     }
 
     private function get_checkbox_product_selected_values($field, $entry)
