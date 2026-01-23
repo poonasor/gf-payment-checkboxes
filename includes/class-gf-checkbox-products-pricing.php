@@ -202,9 +202,13 @@ class CHECPRFO_Pricing
             return $submission_data;
         }
 
-        $order = GFCommon::get_product_fields($form, $entry);
-        $total = rgar($order, 'products_totals/total');
+        $order = GFCommon::get_product_info($form, $entry);
+        $total = rgar($order, 'total');
         $total = GFCommon::to_number($total);
+
+        if ($total <= 0) {
+            return $submission_data;
+        }
 
         $deposit_amount = round($total * ($percent / 100), 2);
         $submission_data['payment_amount'] = $deposit_amount;
