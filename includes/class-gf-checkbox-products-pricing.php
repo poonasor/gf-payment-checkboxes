@@ -323,6 +323,8 @@ class CHECPRFO_Pricing
             GFCommon::log_debug(__METHOD__ . '(): Entry data: ' . print_r($entry, true));
         }
 
+        $deposit_total_fields = [];
+
         foreach ($form['fields'] as $field) {
             if (!is_object($field)) {
                 continue;
@@ -386,6 +388,69 @@ class CHECPRFO_Pricing
             // Process distance pricing fields
             if ($field->type === 'distance_pricing') {
                 $this->add_distance_pricing_to_order($product_info, $field, $entry);
+            }
+
+            if ($field->type === 'deposit_total') {
+                $deposit_total_fields[] = $field;
+            }
+        }
+
+        if (!empty($deposit_total_fields)) {
+            $total_without_deposit = 0;
+
+            $products = rgar($product_info, 'products');
+            if (is_array($products)) {
+                foreach ($products as $product_key => $product) {
+                    if (!is_array($product)) {
+                        continue;
+                    }
+
+                    $price = GFCommon::to_number(rgar($product, 'price', 0));
+                    $qty = GFCommon::to_number(rgar($product, 'quantity', 1));
+                    if ($qty <= 0) {
+                        $qty = 1;
+                    }
+
+                    $total_without_deposit += ($price * $qty);
+                }
+            }
+
+            $shipping_price = rgars($product_info, 'shipping/price');
+            $shipping_price = GFCommon::to_number($shipping_price);
+            if ($shipping_price > 0) {
+                $total_without_deposit += $shipping_price;
+            }
+
+            foreach ($deposit_total_fields as $deposit_field) {
+                $percent_raw = isset($deposit_field->depositPercent) ? $deposit_field->depositPercent : '';
+                $percent = $this->parse_percentage($percent_raw);
+                if ($percent <= 0) {
+                    continue;
+                }
+
+                if ($total_without_deposit <= 0) {
+                    continue;
+                }
+
+                $deposit_amount = round($total_without_deposit * ($percent / 100), 2);
+                if ($deposit_amount <= 0) {
+                    continue;
+                }
+
+                $deposit_field_id = (string) $deposit_field->id;
+                $label = isset($deposit_field->label) ? $deposit_field->label : '';
+                if ($label === '') {
+                    $label = 'Deposit';
+                }
+
+                $product_info['products'][$deposit_field_id] = [
+                    'name'        => $label,
+                    'price'       => $deposit_amount,
+                    'quantity'    => 1,
+                    'options'     => [],
+                    'is_shipping' => false,
+                    'field_id'    => $deposit_field->id,
+                ];
             }
         }
 
