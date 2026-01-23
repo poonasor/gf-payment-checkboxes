@@ -73,7 +73,7 @@ class CHECPRFO_Field_Distance_Pricing extends GF_Field
      */
     public function get_form_editor_field_icon()
     {
-        return 'gform-icon gform-icon--location';
+        return 'gform-icon gform-icon--shipping';
     }
 
     /**
