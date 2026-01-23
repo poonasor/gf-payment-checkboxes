@@ -96,6 +96,30 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
     }
 
     /**
+     * Define entry inputs (sub-inputs) so Gravity Forms persists checkbox values
+     * as 1.1, 1.2, etc. and other GF subsystems (order, merge tags, etc.) can
+     * properly access each selection.
+     *
+     * @return array|null
+     */
+    public function get_entry_inputs()
+    {
+        if (!is_array($this->choices) || empty($this->choices)) {
+            return null;
+        }
+
+        $inputs = [];
+        foreach ($this->choices as $index => $choice) {
+            $inputs[] = [
+                'id'    => (string) $this->id . '.' . ($index + 1),
+                'label' => rgar($choice, 'text', ''),
+            ];
+        }
+
+        return $inputs;
+    }
+
+    /**
      * Render field input HTML for frontend
      *
      * @param array      $form  The form object

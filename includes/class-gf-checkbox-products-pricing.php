@@ -333,26 +333,7 @@ class CHECPRFO_Pricing
             // Process checkbox product fields
             if ($field->type === 'checkbox_product') {
                 $field_id = $field->id;
-                $selected_values = rgar($entry, $field_id);
-
-                if (empty($selected_values) && is_array($field->choices)) {
-                    $values = [];
-                    foreach ($field->choices as $index => $choice) {
-                        $input_id = $field_id . '.' . ($index + 1);
-                        $value = rgar($entry, $input_id);
-                        if ($value !== '' && $value !== null) {
-                            $values[] = $value;
-                        }
-                    }
-
-                    if (!empty($values)) {
-                        $selected_values = $values;
-                    }
-                }
-
-                if (empty($selected_values) && method_exists($field, 'get_value_submission')) {
-                    $selected_values = $field->get_value_submission([], true);
-                }
+                $selected_values = $this->get_checkbox_product_selected_values($field, $entry);
 
                 // Debug logging
                 if (class_exists('GFCommon') && method_exists('GFCommon', 'log_debug')) {
@@ -462,6 +443,52 @@ class CHECPRFO_Pricing
         return $product_info;
     }
 
+    private function get_checkbox_product_selected_values($field, $entry)
+    {
+        $field_id = $field->id;
+
+        $selected_values = rgar($entry, $field_id);
+        if (!empty($selected_values)) {
+            return $selected_values;
+        }
+
+        // Most reliable for multi-input checkbox-style fields: read sub-inputs.
+        if (is_array($field->choices)) {
+            $values = [];
+            foreach ($field->choices as $index => $choice) {
+                $sub_input_id = $field_id . '.' . ($index + 1);
+
+                // Entry may store under 1.1 etc.
+                $value = rgar($entry, $sub_input_id);
+
+                // During postback, $entry can be sparse; also check raw post keys.
+                if (($value === '' || $value === null) && isset($_POST) && is_array($_POST)) {
+                    $post_key_dot = 'input_' . $sub_input_id; // input_1.1
+                    $post_key_us = 'input_' . $field_id . '_' . ($index + 1); // input_1_1
+                    if (array_key_exists($post_key_dot, $_POST)) {
+                        $value = $_POST[$post_key_dot];
+                    } elseif (array_key_exists($post_key_us, $_POST)) {
+                        $value = $_POST[$post_key_us];
+                    }
+                }
+
+                if ($value !== '' && $value !== null) {
+                    $values[] = $value;
+                }
+            }
+
+            if (!empty($values)) {
+                return $values;
+            }
+        }
+
+        if (method_exists($field, 'get_value_submission')) {
+            return $field->get_value_submission([], true);
+        }
+
+        return [];
+    }
+
     /**
      * Add selected products to product info array
      *
@@ -489,8 +516,8 @@ class CHECPRFO_Pricing
             // Get price and ensure it's a number
             $price = GFCommon::to_number(rgar($choice, 'price', 0));
 
-            // Create unique product key
-            $product_key = 'checkbox_' . $field_id . '_' . $index;
+            // Use a GF-like key based on field + sub-input (helps add-ons which expect it).
+            $product_key = (string) $field_id . '.' . ($index + 1);
 
             // Add to products array
             $product_info['products'][$product_key] = [
