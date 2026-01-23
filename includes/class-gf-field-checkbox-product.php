@@ -230,19 +230,33 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
         }
 
         if ($get_from_post_global) {
-            // Collect all checkbox values from POST data
-            // Checkboxes use input_{field_id}.{index} naming pattern
             $values = [];
 
-            // Check $_POST for all inputs matching this field
+            $sources = [];
+            if (is_array($field_values)) {
+                $sources[] = $field_values;
+            }
             if (isset($_POST) && is_array($_POST)) {
-                foreach ($_POST as $key => $value) {
-                    // Match input_{field_id}.{index} pattern
-                    if (preg_match('/^input_' . preg_quote($field_id, '/') . '\.(\d+)$/', $key)) {
-                        if (!empty($value)) {
-                            $values[] = $value;
-                        }
+                $sources[] = $_POST;
+            }
+
+            $pattern = '/^input_' . preg_quote((string) $field_id, '/') . '[\._](\d+)$/';
+
+            foreach ($sources as $source) {
+                foreach ($source as $key => $value) {
+                    if (!is_string($key)) {
+                        continue;
                     }
+
+                    if (!preg_match($pattern, $key)) {
+                        continue;
+                    }
+
+                    if ($value === '' || $value === null) {
+                        continue;
+                    }
+
+                    $values[] = $value;
                 }
             }
 

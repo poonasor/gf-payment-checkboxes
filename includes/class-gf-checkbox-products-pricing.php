@@ -309,6 +309,25 @@ class CHECPRFO_Pricing
                 $field_id = $field->id;
                 $selected_values = rgar($entry, $field_id);
 
+                if (empty($selected_values) && is_array($field->choices)) {
+                    $values = [];
+                    foreach ($field->choices as $index => $choice) {
+                        $input_id = $field_id . '.' . ($index + 1);
+                        $value = rgar($entry, $input_id);
+                        if ($value !== '' && $value !== null) {
+                            $values[] = $value;
+                        }
+                    }
+
+                    if (!empty($values)) {
+                        $selected_values = $values;
+                    }
+                }
+
+                if (empty($selected_values) && method_exists($field, 'get_value_submission')) {
+                    $selected_values = $field->get_value_submission([], true);
+                }
+
                 // Debug logging
                 if (class_exists('GFCommon') && method_exists('GFCommon', 'log_debug')) {
                     GFCommon::log_debug(__METHOD__ . '(): Field ID ' . $field_id . ' selected values: ' . print_r($selected_values, true));
