@@ -39,6 +39,15 @@
     ".admin_label_setting, " +
     ".css_class_setting";
 
+  window.fieldSettings.distance_pricing =
+    ".label_setting, " +
+    ".description_setting, " +
+    ".distance_pricing_settings, " +
+    ".rules_setting, " +
+    ".conditional_logic_field_setting, " +
+    ".admin_label_setting, " +
+    ".css_class_setting";
+
   // Bind to field settings load event
   $(document).on("gform_load_field_settings", function (event, field, form) {
     if (field.type === "checkbox_product") {
@@ -60,6 +69,18 @@
       if (!field.label || field.label === "Untitled") {
         window.SetFieldProperty("label", "Fees");
         $("#field_label").val("Fees").trigger("input").trigger("change");
+      }
+    }
+
+    if (field.type === "distance_pricing") {
+      loadDistancePricingSettings(field, form);
+
+      if (!field.label || field.label === "Untitled") {
+        window.SetFieldProperty("label", "Distance Pricing");
+        $("#field_label")
+          .val("Distance Pricing")
+          .trigger("input")
+          .trigger("change");
       }
     }
   });
@@ -434,5 +455,47 @@
     });
 
     window.SetFieldProperty("fees", fees);
+  }
+
+  /**
+   * Load distance pricing settings into the UI
+   *
+   * @param {Object} field The field object
+   * @param {Object} form The form object
+   */
+  function loadDistancePricingSettings(field, form) {
+    $("#field_distance_price_per_unit").val(field.distancePricePerUnit || "");
+    $("#field_distance_starting_location").val(
+      field.distanceStartingLocation || "",
+    );
+    $("#field_distance_free_zone").val(field.distanceFreeZone || "");
+    $("#field_distance_unit_type").val(field.distanceUnitType || "miles");
+
+    // Populate address field dropdown
+    var $addressFieldSelect = $("#field_distance_address_field");
+    $addressFieldSelect.empty();
+    $addressFieldSelect.append(
+      '<option value="">Select an Address Field</option>',
+    );
+
+    if (form && form.fields) {
+      $.each(form.fields, function (index, formField) {
+        if (formField.type === "address") {
+          var selected =
+            field.distanceAddressField == formField.id
+              ? ' selected="selected"'
+              : "";
+          $addressFieldSelect.append(
+            '<option value="' +
+              formField.id +
+              '"' +
+              selected +
+              ">" +
+              (formField.label || "Address Field " + formField.id) +
+              "</option>",
+          );
+        }
+      });
+    }
   }
 })(jQuery);

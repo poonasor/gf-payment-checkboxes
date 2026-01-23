@@ -57,10 +57,12 @@ class CHECPRFO_Bootstrap
         GF_Fields::register(new CHECPRFO_Field_Checkbox_Product());
         GF_Fields::register(new CHECPRFO_Field_Deposit_Total());
         GF_Fields::register(new CHECPRFO_Field_Fees());
+        GF_Fields::register(new CHECPRFO_Field_Distance_Pricing());
 
         // Initialize admin and pricing classes
         new CHECPRFO_Admin();
         new CHECPRFO_Pricing();
+        new CHECPRFO_Settings();
     }
 
     /**
@@ -87,8 +89,10 @@ class CHECPRFO_Bootstrap
         require_once CHECPRFO_PATH . 'includes/class-gf-field-checkbox-product.php';
         require_once CHECPRFO_PATH . 'includes/class-gf-field-deposit-total.php';
         require_once CHECPRFO_PATH . 'includes/class-gf-field-fees.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-field-distance-pricing.php';
         require_once CHECPRFO_PATH . 'includes/class-gf-checkbox-products-admin.php';
         require_once CHECPRFO_PATH . 'includes/class-gf-checkbox-products-pricing.php';
+        require_once CHECPRFO_PATH . 'includes/class-gf-checkbox-products-settings.php';
     }
 
     /**

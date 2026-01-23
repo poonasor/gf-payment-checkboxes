@@ -40,6 +40,25 @@
       }
     });
 
+    // Monitor address field changes for distance pricing
+    $(document).on(
+      "change blur",
+      ".ginput_container_address input, .ginput_container_address select",
+      function () {
+        var $input = $(this);
+        var $form = $input.closest("form");
+
+        if ($form.length) {
+          var formId = extractFormId($form);
+          if (formId) {
+            setTimeout(function () {
+              checkDistancePricingFields(formId);
+            }, 500);
+          }
+        }
+      },
+    );
+
     // Initialize on form render (for AJAX forms)
     $(document).on("gform_post_render", function (event, formId) {
       initializeForm(formId);
@@ -119,7 +138,235 @@
     setTimeout(function () {
       recalculateTotal(formId);
       updateDepositTotals(formId);
+      initDistancePricing(formId);
     }, 100);
+  }
+
+  /**
+   * Initialize distance pricing for a form
+   *
+   * @param {number} formId Form ID
+   */
+  function initDistancePricing(formId) {
+    var configKey = "gfCheckboxProducts_" + formId;
+    if (
+      typeof window[configKey] === "undefined" ||
+      !window[configKey].distanceFields
+    ) {
+      return;
+    }
+
+    var distanceFields = window[configKey].distanceFields;
+    if (!distanceFields || distanceFields.length === 0) {
+      return;
+    }
+
+    console.log(
+      "[GF Distance Pricing] Initializing distance pricing for form",
+      formId,
+    );
+  }
+
+  /**
+   * Check and calculate distance pricing fields
+   *
+   * @param {number} formId Form ID
+   */
+  function checkDistancePricingFields(formId) {
+    var configKey = "gfCheckboxProducts_" + formId;
+    if (
+      typeof window[configKey] === "undefined" ||
+      !window[configKey].distanceFields
+    ) {
+      return;
+    }
+
+    var distanceFields = window[configKey].distanceFields;
+    var apiKey = window[configKey].googleMapsApiKey;
+
+    if (!apiKey) {
+      console.error("[GF Distance Pricing] Google Maps API key not configured");
+      return;
+    }
+
+    $.each(distanceFields, function (index, fieldConfig) {
+      calculateDistancePrice(formId, fieldConfig, apiKey);
+    });
+  }
+
+  /**
+   * Calculate distance and price for a distance pricing field
+   *
+   * @param {number} formId Form ID
+   * @param {Object} fieldConfig Field configuration
+   * @param {string} apiKey Google Maps API key
+   */
+  function calculateDistancePrice(formId, fieldConfig, apiKey) {
+    var $form = $("#gform_" + formId);
+    var addressFieldId = fieldConfig.addressField;
+
+    if (!addressFieldId) {
+      return;
+    }
+
+    // Get address from the address field
+    var address = getAddressFieldValue(formId, addressFieldId);
+
+    if (!address || address.trim() === "") {
+      return;
+    }
+
+    var $container = $form.find(
+      '[data-field-id="' + fieldConfig.fieldId + '"]',
+    );
+    var $status = $container.find(".distance-pricing-status");
+    var $details = $container.find(".distance-pricing-details");
+    var $distanceInfo = $container.find(".distance-pricing-distance-info");
+    var $costInfo = $container.find(".distance-pricing-cost-info");
+    var $priceInput = $container.find(".distance-pricing-value");
+    var $distanceInput = $container.find(".distance-pricing-distance");
+
+    $status.text("Calculating distance...");
+    $details.hide();
+
+    // Use Google Maps Distance Matrix API
+    if (typeof google === "undefined" || !google.maps) {
+      $status.text("Google Maps API not loaded. Please refresh the page.");
+      return;
+    }
+
+    var service = new google.maps.DistanceMatrixService();
+    var origin = fieldConfig.startingLocation;
+    var destination = address;
+
+    var unitType = fieldConfig.unitType || "miles";
+    var unitSystem =
+      unitType === "kilometers"
+        ? google.maps.UnitSystem.METRIC
+        : google.maps.UnitSystem.IMPERIAL;
+
+    service.getDistanceMatrix(
+      {
+        origins: [origin],
+        destinations: [destination],
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: unitSystem,
+      },
+      function (response, status) {
+        if (status === google.maps.DistanceMatrixStatus.OK) {
+          var results = response.rows[0].elements[0];
+
+          if (results.status === "OK") {
+            var distanceValue = results.distance.value; // in meters
+            var distanceText = results.distance.text;
+
+            // Convert to miles or kilometers
+            var distance =
+              unitType === "kilometers"
+                ? distanceValue / 1000
+                : distanceValue / 1609.34;
+
+            distance = Math.round(distance * 100) / 100;
+
+            $distanceInput.val(distance);
+
+            // Calculate price
+            var freeZone = parseFloat(fieldConfig.freeZone) || 0;
+            var pricePerUnit = parseFloat(fieldConfig.pricePerUnit) || 0;
+            var price = 0;
+
+            if (distance > freeZone) {
+              var chargeableDistance = distance - freeZone;
+              price = chargeableDistance * pricePerUnit;
+              price = Math.round(price * 100) / 100;
+            }
+
+            $priceInput.val(price);
+
+            // Update display
+            var unitLabel = unitType === "kilometers" ? "km" : "miles";
+            $distanceInfo.html(
+              "<strong>Distance:</strong> " +
+                distance.toFixed(2) +
+                " " +
+                unitLabel,
+            );
+
+            if (price > 0) {
+              var formattedPrice = formatCurrency(price, formId);
+              $costInfo.html(
+                "<strong>Distance Charge:</strong> " +
+                  formattedPrice +
+                  " (" +
+                  chargeableDistance.toFixed(2) +
+                  " " +
+                  unitLabel +
+                  " @ " +
+                  formatCurrency(pricePerUnit, formId) +
+                  " per " +
+                  unitLabel +
+                  ")",
+              );
+              $status.text("Distance calculated successfully");
+            } else {
+              $costInfo.html(
+                "<strong>Distance Charge:</strong> No charge (within free zone of " +
+                  freeZone +
+                  " " +
+                  unitLabel +
+                  ")",
+              );
+              $status.text("Within free delivery zone");
+            }
+
+            $details.show();
+
+            // Trigger price recalculation
+            recalculateTotal(formId);
+            setTimeout(function () {
+              updateDepositTotals(formId);
+            }, 150);
+          } else {
+            $status.text(
+              "Could not calculate distance. Please check the address.",
+            );
+            $priceInput.val(0);
+          }
+        } else {
+          $status.text("Error calculating distance: " + status);
+          $priceInput.val(0);
+        }
+      },
+    );
+  }
+
+  /**
+   * Get address field value
+   *
+   * @param {number} formId Form ID
+   * @param {string} fieldId Field ID
+   * @return {string} Address string
+   */
+  function getAddressFieldValue(formId, fieldId) {
+    var $form = $("#gform_" + formId);
+    var addressParts = [];
+
+    // Standard Gravity Forms address field structure
+    var street = $form.find("#input_" + formId + "_" + fieldId + "_1").val();
+    var street2 = $form.find("#input_" + formId + "_" + fieldId + "_2").val();
+    var city = $form.find("#input_" + formId + "_" + fieldId + "_3").val();
+    var state = $form.find("#input_" + formId + "_" + fieldId + "_4").val();
+    var zip = $form.find("#input_" + formId + "_" + fieldId + "_5").val();
+    var country = $form.find("#input_" + formId + "_" + fieldId + "_6").val();
+
+    if (street) addressParts.push(street);
+    if (street2) addressParts.push(street2);
+    if (city) addressParts.push(city);
+    if (state) addressParts.push(state);
+    if (zip) addressParts.push(zip);
+    if (country) addressParts.push(country);
+
+    return addressParts.join(", ");
   }
 
   function parsePercent(value) {

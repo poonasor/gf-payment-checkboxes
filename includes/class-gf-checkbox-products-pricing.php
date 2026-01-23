@@ -43,6 +43,9 @@ class CHECPRFO_Pricing
 
         // Payment processing: override payment amount when a Deposit Due field is selected
         add_filter('gform_submission_data_pre_process_payment', [$this, 'submission_data_pre_process_payment'], 10, 4);
+
+        // Enqueue Google Maps API for distance pricing
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_google_maps_api']);
     }
 
     /**
@@ -224,6 +227,10 @@ class CHECPRFO_Pricing
             $pricing_fields[] = 'fees';
         }
 
+        if (!in_array('distance_pricing', $pricing_fields, true)) {
+            $pricing_fields[] = 'distance_pricing';
+        }
+
         return $pricing_fields;
     }
 
@@ -278,6 +285,11 @@ class CHECPRFO_Pricing
             // Process fees fields
             if ($field->type === 'fees') {
                 $this->add_fees_to_order($product_info, $field, $entry);
+            }
+
+            // Process distance pricing fields
+            if ($field->type === 'distance_pricing') {
+                $this->add_distance_pricing_to_order($product_info, $field, $entry);
             }
         }
 
@@ -399,6 +411,67 @@ class CHECPRFO_Pricing
     }
 
     /**
+     * Add distance pricing to product info array
+     *
+     * @param array  $product_info Product information (passed by reference)
+     * @param object $field        Field object
+     * @param array  $entry        Entry object
+     * @return void
+     */
+    private function add_distance_pricing_to_order(&$product_info, $field, $entry)
+    {
+        $field_id = $field->id;
+        $price = rgar($entry, $field_id);
+
+        if (empty($price) || $price <= 0) {
+            return;
+        }
+
+        $price = GFCommon::to_number($price);
+
+        $product_key = 'distance_pricing_' . $field_id;
+
+        $label = isset($field->label) ? $field->label : esc_html__('Distance Charge', 'checkbox-products-for-gravity-forms');
+
+        $product_info['products'][$product_key] = [
+            'name'       => $label,
+            'price'      => $price,
+            'quantity'   => 1,
+            'options'    => [],
+            'is_shipping' => false,
+            'field_id'   => $field_id,
+        ];
+    }
+
+    /**
+     * Enqueue Google Maps API
+     *
+     * @return void
+     */
+    public function enqueue_google_maps_api()
+    {
+        $api_key = CHECPRFO_Settings::get_google_maps_api_key();
+
+        if (empty($api_key)) {
+            return;
+        }
+
+        // Check if we're on a page with a form that has distance pricing
+        global $post;
+        if (!$post || !has_shortcode($post->post_content, 'gravityform')) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'google-maps-api',
+            'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key) . '&libraries=places',
+            [],
+            null,
+            true
+        );
+    }
+
+    /**
      * Check if form has checkbox product field
      *
      * @param array $form Form object
@@ -415,7 +488,7 @@ class CHECPRFO_Pricing
                 continue;
             }
 
-            if ($field->type === 'checkbox_product' || $field->type === 'deposit_total' || $field->type === 'fees') {
+            if ($field->type === 'checkbox_product' || $field->type === 'deposit_total' || $field->type === 'fees' || $field->type === 'distance_pricing') {
                 return true;
             }
         }
@@ -439,6 +512,22 @@ class CHECPRFO_Pricing
         $form_id = absint($form['id']);
         $currency = rgar($form, 'currency', GFCommon::get_currency());
 
+        $distance_fields = [];
+        if (is_array($form['fields'])) {
+            foreach ($form['fields'] as $field) {
+                if (is_object($field) && $field->type === 'distance_pricing') {
+                    $distance_fields[] = [
+                        'fieldId' => $field->id,
+                        'pricePerUnit' => isset($field->distancePricePerUnit) ? floatval($field->distancePricePerUnit) : 0,
+                        'startingLocation' => isset($field->distanceStartingLocation) ? $field->distanceStartingLocation : '',
+                        'freeZone' => isset($field->distanceFreeZone) ? floatval($field->distanceFreeZone) : 0,
+                        'addressField' => isset($field->distanceAddressField) ? $field->distanceAddressField : '',
+                        'unitType' => isset($field->distanceUnitType) ? $field->distanceUnitType : 'miles',
+                    ];
+                }
+            }
+        }
+
         wp_localize_script(
             'gf-checkbox-products-frontend',
             'gfCheckboxProducts_' . $form_id,
@@ -446,6 +535,8 @@ class CHECPRFO_Pricing
                 'formId'   => $form_id,
                 'currency' => $currency,
                 'debug'    => defined('WP_DEBUG') && WP_DEBUG,
+                'googleMapsApiKey' => CHECPRFO_Settings::get_google_maps_api_key(),
+                'distanceFields' => $distance_fields,
             ]
         );
     }

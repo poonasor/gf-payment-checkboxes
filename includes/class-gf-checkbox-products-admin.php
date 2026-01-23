@@ -96,6 +96,55 @@ class CHECPRFO_Admin
                 <?php esc_html_e('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These will be added to the form total.', 'checkbox-products-for-gravity-forms'); ?>
             </p>
         </li>
+
+        <li class="distance_pricing_settings field_setting">
+            <label class="section_label">
+                <?php esc_html_e('Distance Pricing Configuration', 'checkbox-products-for-gravity-forms'); ?>
+                <?php gform_tooltip('form_field_distance_pricing'); ?>
+            </label>
+
+            <div style="margin-bottom: 15px;">
+                <label for="field_distance_price_per_unit" style="display: block; margin-bottom: 5px;">
+                    <?php esc_html_e('Price per Mile/KM', 'checkbox-products-for-gravity-forms'); ?>
+                </label>
+                <input type="text" id="field_distance_price_per_unit" class="fieldwidth-3" onkeyup="SetFieldProperty('distancePricePerUnit', this.value);" onchange="SetFieldProperty('distancePricePerUnit', this.value);" />
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="field_distance_starting_location" style="display: block; margin-bottom: 5px;">
+                    <?php esc_html_e('Starting Location (Postal/Zip Code)', 'checkbox-products-for-gravity-forms'); ?>
+                </label>
+                <input type="text" id="field_distance_starting_location" class="fieldwidth-3" onkeyup="SetFieldProperty('distanceStartingLocation', this.value);" onchange="SetFieldProperty('distanceStartingLocation', this.value);" placeholder="<?php esc_attr_e('e.g., 90210 or M5H 2N2', 'checkbox-products-for-gravity-forms'); ?>" />
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="field_distance_free_zone" style="display: block; margin-bottom: 5px;">
+                    <?php esc_html_e('Free Zone Distance', 'checkbox-products-for-gravity-forms'); ?>
+                </label>
+                <input type="text" id="field_distance_free_zone" class="fieldwidth-3" onkeyup="SetFieldProperty('distanceFreeZone', this.value);" onchange="SetFieldProperty('distanceFreeZone', this.value);" placeholder="<?php esc_attr_e('e.g., 10', 'checkbox-products-for-gravity-forms'); ?>" />
+                <p class="description"><?php esc_html_e('Distance within this zone is free. Charges apply beyond this distance.', 'checkbox-products-for-gravity-forms'); ?></p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="field_distance_unit_type" style="display: block; margin-bottom: 5px;">
+                    <?php esc_html_e('Distance Unit', 'checkbox-products-for-gravity-forms'); ?>
+                </label>
+                <select id="field_distance_unit_type" onchange="SetFieldProperty('distanceUnitType', this.value);">
+                    <option value="miles"><?php esc_html_e('Miles', 'checkbox-products-for-gravity-forms'); ?></option>
+                    <option value="kilometers"><?php esc_html_e('Kilometers', 'checkbox-products-for-gravity-forms'); ?></option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="field_distance_address_field" style="display: block; margin-bottom: 5px;">
+                    <?php esc_html_e('Link to Address Field', 'checkbox-products-for-gravity-forms'); ?>
+                </label>
+                <select id="field_distance_address_field" onchange="SetFieldProperty('distanceAddressField', this.value);">
+                    <option value=""><?php esc_html_e('Select an Address Field', 'checkbox-products-for-gravity-forms'); ?></option>
+                </select>
+                <p class="description"><?php esc_html_e('Select the address field that users will fill in to calculate distance.', 'checkbox-products-for-gravity-forms'); ?></p>
+            </div>
+        </li>
 <?php
     }
 
@@ -163,6 +212,12 @@ class CHECPRFO_Admin
             '<h6>%s</h6>%s',
             esc_html__('Fees', 'checkbox-products-for-gravity-forms'),
             esc_html__('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These fees will be automatically added to the form total.', 'checkbox-products-for-gravity-forms')
+        );
+
+        $tooltips['form_field_distance_pricing'] = sprintf(
+            '<h6>%s</h6>%s',
+            esc_html__('Distance Pricing', 'checkbox-products-for-gravity-forms'),
+            esc_html__('Calculate pricing based on distance from a starting location. Set your price per mile/km, starting location, and free zone distance. The field will automatically calculate charges for distances beyond the free zone.', 'checkbox-products-for-gravity-forms')
         );
 
         return $tooltips;
