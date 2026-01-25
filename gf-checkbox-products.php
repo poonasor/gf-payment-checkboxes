@@ -29,6 +29,9 @@ define('CHECPRFO_MIN_GF_VERSION', '2.5');
 // Initialize plugin after Gravity Forms loads
 add_action('gform_loaded', ['CHECPRFO_Bootstrap', 'load'], 5);
 
+// Ensure form editor assets are enqueued early enough on admin pages.
+add_action('admin_enqueue_scripts', ['CHECPRFO_Bootstrap', 'enqueue_admin_assets'], 20);
+
 /**
  * Bootstrap class for the plugin
  *
@@ -63,6 +66,65 @@ class CHECPRFO_Bootstrap
         new CHECPRFO_Admin();
         new CHECPRFO_Pricing();
         new CHECPRFO_Settings();
+    }
+
+    public static function enqueue_admin_assets($hook_suffix = '')
+    {
+        if (!is_string($hook_suffix) || strpos($hook_suffix, 'gf_edit_forms') === false) {
+            return;
+        }
+
+        if ((defined('DOING_AJAX') && DOING_AJAX) || (function_exists('wp_doing_ajax') && wp_doing_ajax()) || (isset($_GET) && is_array($_GET) && array_key_exists('gf_ajax_save', $_GET))) {
+            return;
+        }
+
+        if (!self::is_gravityforms_supported()) {
+            return;
+        }
+
+        $js_ver = defined('CHECPRFO_VERSION') ? CHECPRFO_VERSION : false;
+        $css_ver = defined('CHECPRFO_VERSION') ? CHECPRFO_VERSION : false;
+
+        if (defined('CHECPRFO_PATH')) {
+            $js_path = CHECPRFO_PATH . 'assets/js/admin.js';
+            if (file_exists($js_path)) {
+                $js_ver = filemtime($js_path);
+            }
+
+            $css_path = CHECPRFO_PATH . 'assets/css/admin.css';
+            if (file_exists($css_path)) {
+                $css_ver = filemtime($css_path);
+            }
+        }
+
+        wp_enqueue_script(
+            'gf-checkbox-products-admin',
+            CHECPRFO_URL . 'assets/js/admin.js',
+            ['jquery', 'gform_form_editor'],
+            $js_ver,
+            true
+        );
+
+        wp_localize_script(
+            'gf-checkbox-products-admin',
+            'gfCheckboxProductsAdmin',
+            [
+                'i18n' => [
+                    'confirmDelete' => esc_html__('Are you sure you want to delete this choice?', 'checkbox-products-for-gravity-forms'),
+                    'labelPlaceholder' => esc_attr__('Product Name', 'checkbox-products-for-gravity-forms'),
+                    'pricePlaceholder' => esc_attr__('0.00', 'checkbox-products-for-gravity-forms'),
+                    'valuePlaceholder' => esc_attr__('value', 'checkbox-products-for-gravity-forms'),
+                ],
+                'currency' => class_exists('GFCommon') ? GFCommon::get_currency() : '',
+            ]
+        );
+
+        wp_enqueue_style(
+            'gf-checkbox-products-admin',
+            CHECPRFO_URL . 'assets/css/admin.css',
+            [],
+            $css_ver
+        );
     }
 
     /**

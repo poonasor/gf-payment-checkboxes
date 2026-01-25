@@ -27,11 +27,8 @@ class CHECPRFO_Admin
         // Add custom settings UI to form editor
         add_action('gform_field_standard_settings', [$this, 'field_settings_ui'], 10, 2);
 
-        // Enqueue admin scripts and styles
-        add_action('gform_editor_js', [$this, 'editor_js']);
-
         // Add field-specific tooltips
-        add_filter('gform_tooltips', [$this, 'add_tooltips']);
+        // (Disabled: tooltips are optional and can interfere with editor initialization if mis-escaped)
 
         // Add custom field icon (optional)
         add_filter('gform_field_type_title', [$this, 'field_type_title'], 10, 2);
@@ -69,7 +66,7 @@ class CHECPRFO_Admin
                 <!-- Dynamic choices will be populated via JavaScript -->
             </div>
 
-            <button type="button" class="button gf-add-checkbox-product-choice" style="margin-top: 10px;" onclick="gfCheckboxProductAddChoice(); return false;">
+            <button type="button" class="button gf-add-checkbox-product-choice" style="margin-top: 10px;">
                 <?php esc_html_e('Add Product Choice', 'checkbox-products-for-gravity-forms'); ?>
             </button>
 
@@ -153,75 +150,7 @@ class CHECPRFO_Admin
      *
      * @return void
      */
-    public function editor_js()
-    {
-        // Enqueue admin JavaScript
-        wp_enqueue_script(
-            'gf-checkbox-products-admin',
-            CHECPRFO_URL . 'assets/js/admin.js',
-            ['jquery', 'gform_form_editor'],
-            CHECPRFO_VERSION,
-            true
-        );
 
-        // Localize script with translations and settings
-        wp_localize_script(
-            'gf-checkbox-products-admin',
-            'gfCheckboxProductsAdmin',
-            [
-                'i18n' => [
-                    'confirmDelete' => esc_html__('Are you sure you want to delete this choice?', 'checkbox-products-for-gravity-forms'),
-                    'labelPlaceholder' => esc_attr__('Product Name', 'checkbox-products-for-gravity-forms'),
-                    'pricePlaceholder' => esc_attr__('0.00', 'checkbox-products-for-gravity-forms'),
-                    'valuePlaceholder' => esc_attr__('value', 'checkbox-products-for-gravity-forms'),
-                ],
-                'currency' => GFCommon::get_currency(),
-            ]
-        );
-
-        // Enqueue admin CSS
-        wp_enqueue_style(
-            'gf-checkbox-products-admin',
-            CHECPRFO_URL . 'assets/css/admin.css',
-            [],
-            CHECPRFO_VERSION
-        );
-    }
-
-    /**
-     * Add tooltips for field settings
-     *
-     * @param array $tooltips Existing tooltips
-     * @return array Modified tooltips
-     */
-    public function add_tooltips($tooltips)
-    {
-        $tooltips['form_field_checkbox_product_choices'] = sprintf(
-            '<h6>%s</h6>%s',
-            esc_html__('Product Choices', 'checkbox-products-for-gravity-forms'),
-            esc_html__('Add the products you want users to select from. Each product can have its own price. The selected products will be added to the form total.', 'checkbox-products-for-gravity-forms')
-        );
-
-        $tooltips['form_field_deposit_total_percent'] = sprintf(
-            '<h6>%s</h6>%s',
-            esc_html__('Deposit Percentage', 'checkbox-products-for-gravity-forms'),
-            esc_html__('Enter a percentage (e.g. 10% or 50) to calculate the deposit amount from the form total.', 'checkbox-products-for-gravity-forms')
-        );
-
-        $tooltips['form_field_fees'] = sprintf(
-            '<h6>%s</h6>%s',
-            esc_html__('Fees', 'checkbox-products-for-gravity-forms'),
-            esc_html__('Add fees with labels and prices (e.g., Travel Fee, Processing Fee). These fees will be automatically added to the form total.', 'checkbox-products-for-gravity-forms')
-        );
-
-        $tooltips['form_field_distance_pricing'] = sprintf(
-            '<h6>%s</h6>%s',
-            esc_html__('Distance Pricing', 'checkbox-products-for-gravity-forms'),
-            esc_html__('Calculate pricing based on distance from a starting location. Set your price per mile/km, starting location, and free zone distance. The field will automatically calculate charges for distances beyond the free zone.', 'checkbox-products-for-gravity-forms')
-        );
-
-        return $tooltips;
-    }
 
     /**
      * Customize field type title

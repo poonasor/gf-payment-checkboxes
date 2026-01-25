@@ -33,8 +33,6 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
      */
     public $type = 'checkbox_product';
 
-    public $inputType = 'checkbox';
-
     /**
      * Get field title for form editor
      *
@@ -97,6 +95,20 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
         return true;
     }
 
+    public function post_convert_field()
+    {
+        if (!isset($this->inputs) || !is_array($this->inputs)) {
+            $this->inputs = [];
+        }
+
+        if (empty($this->inputs)) {
+            $inputs = $this->get_entry_inputs();
+            if (is_array($inputs)) {
+                $this->inputs = $inputs;
+            }
+        }
+    }
+
     /**
      * Define entry inputs (sub-inputs) so Gravity Forms persists checkbox values
      * as 1.1, 1.2, etc. and other GF subsystems (order, merge tags, etc.) can
@@ -107,6 +119,7 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
     public function get_entry_inputs()
     {
         if (!is_array($this->choices) || empty($this->choices)) {
+            $this->inputs = [];
             return null;
         }
 
@@ -117,6 +130,8 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
                 'label' => rgar($choice, 'text', ''),
             ];
         }
+
+        $this->inputs = $inputs;
 
         return $inputs;
     }
@@ -284,7 +299,7 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
             }
 
             if ($value !== '' && $value !== null) {
-                $submission[(string) $input_id] = $value;
+                $submission[] = $value;
             }
         }
 

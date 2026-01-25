@@ -69,6 +69,10 @@ class CHECPRFO_Pricing
     {
         // Only process Total fields
         if ($field->type !== 'total') {
+            if ($field->type === 'checkbox_product' && empty($field->isRequired) && isset($result['is_valid']) && !$result['is_valid']) {
+                $result['is_valid'] = true;
+                $result['message'] = '';
+            }
             return $result;
         }
 

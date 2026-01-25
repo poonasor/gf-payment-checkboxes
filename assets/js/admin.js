@@ -52,6 +52,13 @@
   $(document).on("gform_load_field_settings", function (event, field, form) {
     if (field.type === "checkbox_product") {
       loadProductChoices(field);
+
+      $(".gf-add-checkbox-product-choice")
+        .off("click.gfCheckboxProducts")
+        .on("click.gfCheckboxProducts", function (e) {
+          e.preventDefault();
+          addChoiceRow();
+        });
     }
 
     if (field.type === "deposit_total") {
@@ -83,6 +90,11 @@
           .trigger("change");
       }
     }
+  });
+
+  $(document).on("click", ".gf-add-checkbox-product-choice", function (e) {
+    e.preventDefault();
+    addChoiceRow();
   });
 
   $(document).on("gform_field_added", function (event, form, field) {
@@ -215,16 +227,23 @@
     container.append(row);
 
     // Bind events
-    row.find("input").on("input change", function () {
-      // Auto-generate value from label if value is empty
-      if ($(this).hasClass("gf-choice-label")) {
-        var valueField = row.find(".gf-choice-value");
-        if (!valueField.val()) {
-          valueField.val(sanitizeValue($(this).val()));
-        }
+    row.find(".gf-choice-label").on("input change", function () {
+      saveProductChoices();
+    });
+
+    row.find(".gf-choice-label").on("blur", function () {
+      var valueField = row.find(".gf-choice-value");
+      if (!valueField.val()) {
+        valueField.val(sanitizeValue($(this).val()));
       }
       saveProductChoices();
     });
+
+    row
+      .find(".gf-choice-value, .gf-choice-price")
+      .on("input change", function () {
+        saveProductChoices();
+      });
 
     row.find(".gf-delete-choice").on("click", function (e) {
       e.preventDefault();
