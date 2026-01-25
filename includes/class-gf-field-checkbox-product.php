@@ -401,6 +401,9 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
         }
 
         $selected = is_array($value) ? $value : explode(',', $value);
+        $selected = array_filter($selected, static function ($v) {
+            return $v !== '' && $v !== null;
+        });
         $count = count($selected);
         $total = 0;
 
@@ -408,7 +411,7 @@ class CHECPRFO_Field_Checkbox_Product extends GF_Field
         if (is_array($this->choices)) {
             foreach ($this->choices as $choice) {
                 if (in_array(rgar($choice, 'value'), $selected, true)) {
-                    $total += floatval(rgar($choice, 'price', 0));
+                    $total += GFCommon::to_number(rgar($choice, 'price', 0));
                 }
             }
         }

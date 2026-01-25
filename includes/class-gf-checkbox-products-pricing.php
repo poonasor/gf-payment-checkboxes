@@ -848,7 +848,7 @@ class CHECPRFO_Pricing
             if (is_array($field->choices)) {
                 foreach ($field->choices as $choice) {
                     if (in_array(rgar($choice, 'value'), $selected, true)) {
-                        $total += floatval(rgar($choice, 'price', 0));
+                        $total += GFCommon::to_number(rgar($choice, 'price', 0));
                     }
                 }
             }
@@ -892,7 +892,7 @@ class CHECPRFO_Pricing
                     if (in_array(rgar($choice, 'value'), $selected, true)) {
                         $products[] = [
                             'name'     => rgar($choice, 'text', ''),
-                            'price'    => floatval(rgar($choice, 'price', 0)),
+                            'price'    => GFCommon::to_number(rgar($choice, 'price', 0)),
                             'quantity' => 1,
                             'field_id' => $field->id,
                         ];
