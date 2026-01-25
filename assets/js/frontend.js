@@ -526,6 +526,51 @@
     )
       .first()
       .trigger("change");
+
+    setTimeout(function () {
+      var checkboxTotal = calculateCheckboxProductsTotal(formId);
+      if (!(checkboxTotal > 0)) {
+        return;
+      }
+
+      var $form = $("#gform_" + formId);
+      if (!$form.length) {
+        return;
+      }
+
+      var $hiddenTotal = $form.find(
+        'input[id^="gform_total_"], input[name^="gform_total"], input[name="gform_total"]',
+      );
+
+      var currentTotal = 0;
+      if ($hiddenTotal.length) {
+        var raw = $.trim($hiddenTotal.first().val());
+        if (raw) {
+          raw = String(raw).replace(/[^0-9.\-]/g, "");
+          var parsed = parseFloat(raw);
+          if (!isNaN(parsed)) {
+            currentTotal = parsed;
+          }
+        }
+      }
+
+      if (currentTotal > 0) {
+        return;
+      }
+
+      var formattedTotal = formatCurrency(checkboxTotal, formId);
+
+      if ($hiddenTotal.length) {
+        $hiddenTotal.first().val(checkboxTotal.toFixed(2));
+      }
+
+      var $visibleTotal = $form.find(".ginput_total");
+      if ($visibleTotal.length) {
+        $visibleTotal.first().text(formattedTotal);
+      }
+
+      $(document).trigger("gform_total_change", [formId]);
+    }, 50);
   }
 
   /**
